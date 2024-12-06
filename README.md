@@ -6,5 +6,6 @@ using Deno 2.1.3
 
 ```sh
 # run part code
-deno run --allow-read day-1/part-1.ts
+cd day-1
+deno run --allow-read ./part-1.ts
 ```
