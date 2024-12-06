@@ -14,9 +14,7 @@ const getReportsFromInput = (): Reports => {
     return reports;
 };
 
-const isIncreasing = (a: number, b: number): boolean => {
-    return b > a;
-};
+const isIncreasing = (a: number, b: number): boolean => b > a;
 
 const isSafeReport = (report: number[]): boolean => {
     const isIncreasingReport = isIncreasing(report[0], report[1]);
@@ -49,7 +47,7 @@ const isSafeWithRetry = (report: number[]): boolean => {
 
 const main = (): number => {
     return getReportsFromInput()
-        .filter(report => isSafeReport(report) || isSafeWithRetry(report))
+        .filter(isSafeWithRetry)
         .length;
 }
 
