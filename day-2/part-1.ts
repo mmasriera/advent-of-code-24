@@ -1,11 +1,12 @@
 
+import { readInputByLines } from '../utils/index.ts';
+
 type Reports = number[][];
 
 const getReportsFromInput = (): Reports => {
     const reports: Reports = [];
 
-    Deno.readTextFileSync('./inputs/input-1.txt')
-        .split('\n')
+    readInputByLines('./inputs/input-1.txt')
         .forEach(line => {
             reports.push(line.split(' ').map(Number));
         });
@@ -36,9 +37,8 @@ const isSafe = (report: number[]): boolean => {
 
 const main = (): number => {
     const reports = getReportsFromInput();
-    const safeReportsCount = reports.filter(isSafe).length;
 
-    return safeReportsCount;
+    return reports.filter(isSafe).length;
 }
 
 console.log('result day 2, part 1:', main()); // 432
