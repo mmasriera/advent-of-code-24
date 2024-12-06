@@ -4,7 +4,7 @@ type Lists = [number[], number[]];
 const getListsFromInput = (): Lists => {
     const lists: Lists = [[], []];
 
-    Deno.readTextFileSync('./inputs/input-1.txt')
+    Deno.readTextFileSync('./inputs/input-test.txt')
         .split('\n')
         .map(line => line.split('   ').map(Number))
         .forEach(([first, second]) => {
