@@ -4,7 +4,7 @@ type Lists = [number[], number[]];
 const getListsFromInput = (): Lists => {
     const lists: Lists = [[], []];
 
-    Deno.readTextFileSync('./input-1.txt')
+    Deno.readTextFileSync('./inputs/input-1.txt')
         .split('\n')
         .map(line => line.split('   ').map(Number))
         .forEach(([first, second]) => {
@@ -27,9 +27,6 @@ const sumDistances = (list1: number[], list2: number[]): number => {
 
 const main = (): number => {
     const [list1, list2] = getListsFromInput();
-
-    list1.sort();
-    list2.sort();
 
     return sumDistances(list1, list2);
 };
