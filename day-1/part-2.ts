@@ -1,12 +1,13 @@
 
+import { readInputByLines } from '../utils/index.ts';
+
 type Lists = [number[], number[]];
 type Counter = Record<number, number>
 
 const getListsFromInput = (): Lists => {
     const lists: Lists = [[], []];
 
-    Deno.readTextFileSync('./inputs/input-1.txt')  // same as in part 1
-        .split('\n')
+    readInputByLines('./inputs/input-1.txt')  // same as in part 1
         .map(line => line.split('   ').map(Number))
         .forEach(([first, second]) => {
             lists[0].push(first);
@@ -44,4 +45,3 @@ const main = (): number => {
 };
 
 console.log('result part 2:', main()); // success: 23387399
-

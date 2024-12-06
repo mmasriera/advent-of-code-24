@@ -1,11 +1,12 @@
 
+import { readInputByLines } from '../utils/index.ts';
+
 type Lists = [number[], number[]];
 
 const getListsFromInput = (): Lists => {
     const lists: Lists = [[], []];
 
-    Deno.readTextFileSync('./inputs/input-1.txt')
-        .split('\n')
+    readInputByLines('./inputs/input-1.txt')
         .map(line => line.split('   ').map(Number))
         .forEach(([first, second]) => {
             lists[0].push(first);
@@ -16,17 +17,17 @@ const getListsFromInput = (): Lists => {
 };
 
 const sumDistances = (list1: number[], list2: number[]): number => {
-    let sum = 0;
-
-    list1.forEach((item, idx) => {
-        sum += Math.abs(item - list2[idx]);
-    });
-
-    return sum;
+    return list1.reduce(
+        (sum, item, idx) => sum + Math.abs(item - list2[idx]),
+        0
+    );
 }
 
 const main = (): number => {
     const [list1, list2] = getListsFromInput();
+
+    list1.sort();
+    list2.sort();
 
     return sumDistances(list1, list2);
 };
