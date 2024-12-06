@@ -44,4 +44,3 @@ const main = (): number => {
 };
 
 console.log('result part 2:', main()); // success: 23387399
-
