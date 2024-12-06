@@ -1,22 +1,44 @@
 
-type Data = number[][];
+type Reports = number[][];
 
-const getListsFromInput = (): Data => {
-    const lists: Data = [];
+const getReportsFromInput = (): Reports => {
+    const reports: Reports = [];
 
-    Deno.readTextFileSync('./inputs/input-2.txt')
+    Deno.readTextFileSync('./inputs/input-1.txt')
         .split('\n')
-        .filter(line => line.length > 0)
         .forEach(line => {
-            lists.push(line.split(' ').map(Number));
+            reports.push(line.split(' ').map(Number));
         });
 
-    return lists;
+    return reports;
+};
+
+const isIncreasing = (a: number, b: number): boolean => {
+    return (a !== b) && (b > a);
+};
+
+const isSafe = (report: number[]): boolean => {
+    const isIncreasingReport = isIncreasing(report[0], report[1]);
+
+    for (let i = 1; i < report.length; i++) {
+        if (isIncreasingReport === isIncreasing(report[i], report[i - 1])) {
+            return false; // not in same direction (asc/desc)
+        }
+        const diff = Math.abs(report[i] - report[i - 1]);
+        if ((diff < 1) || (diff > 3)) {
+            return false;
+        }
+    }
+
+    return true;
 };
 
 
 const main = (): number => {
-    return 0;
+    const reports = getReportsFromInput();
+    const safeReportsCount = reports.filter(isSafe).length;
+
+    return safeReportsCount;
 }
 
-console.log('result:', main());
+console.log('result day 2, part 1:', main()); // 432
