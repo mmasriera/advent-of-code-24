@@ -7,7 +7,7 @@ const getListsFromInput = (): Lists => {
 
     Deno.readTextFileSync('./inputs/input-1.txt')  // same as in part 1
         .split('\n')
-        .map(line => line.split('   ').map(Number))
+        .map(line => line.split(' ').map(Number))
         .forEach(([first, second]) => {
             lists[0].push(first);
             lists[1].push(second);
