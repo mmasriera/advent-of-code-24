@@ -1,5 +1,5 @@
 
-import { readInputByLines } from '../utils/index.ts';
+import { readInputByLines } from '../../utils/index.ts';
 
 type Lists = [number[], number[]];
 type Counter = Record<number, number>
@@ -7,7 +7,7 @@ type Counter = Record<number, number>
 const getListsFromInput = (): Lists => {
     const lists: Lists = [[], []];
 
-    readInputByLines('./inputs/input-1.txt')  // same as in part 1
+    readInputByLines('../inputs/input-one.txt')  // same as in part 1
         .map(line => line.split('   ').map(Number))
         .forEach(([first, second]) => {
             lists[0].push(first);

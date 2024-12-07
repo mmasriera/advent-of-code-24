@@ -1,12 +1,12 @@
 
-import { readInputByLines } from '../utils/index.ts';
+import { readInputByLines } from '../../utils/index.ts';
 
 type Lists = [number[], number[]];
 
 const getListsFromInput = (): Lists => {
     const lists: Lists = [[], []];
 
-    readInputByLines('./inputs/input-1.txt')
+    readInputByLines('../inputs/input-one.txt')
         .map(line => line.split('   ').map(Number))
         .forEach(([first, second]) => {
             lists[0].push(first);
