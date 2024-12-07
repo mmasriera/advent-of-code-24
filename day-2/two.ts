@@ -6,7 +6,7 @@ type Reports = number[][];
 const getReportsFromInput = (): Reports => {
     const reports: Reports = [];
 
-    readInputByLines('./inputs/input-1.txt')
+    readInputByLines('./inputs/input-one.txt')
         .forEach(line => {
             reports.push(line.split(' ').map(Number));
         });
