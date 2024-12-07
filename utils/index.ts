@@ -1,4 +1,8 @@
 
+export const readInputFile = (path: string): string => {
+    return Deno.readTextFileSync(path);
+};
+
 export const readInputByLines = (path: string): string[] => {
-    return Deno.readTextFileSync(path).split('\n')
+    return readInputFile(path).split('\n');
 };

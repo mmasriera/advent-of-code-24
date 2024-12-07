@@ -7,5 +7,5 @@ using Deno 2.1.3
 ```sh
 # run part code
 cd day-1
-deno run --allow-read ./part-1.ts
+deno run --allow-read ./one.ts
 ```
