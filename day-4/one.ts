@@ -5,42 +5,33 @@ type Reports = string[][];
 
 const XMAS = 'XMAS';
 
-// const hasAdjacentMatch = (puzzle: string[][], startRow: number, startCol: number, increaseRow: number, increaseCol: number): boolean => {
-//     const row = startRow + increaseRow;
-//     const col = startCol + increaseCol;
-
-//     if (puzzle[row]?.[col] === XMAS[0]) {
-//         return true;
-//     }
-
-//     return false;
-// }
+const hasAdjacentMatch = (
+    puzzle: string[], startRow: number, startCol: number, increaseRow: number, increaseCol: number
+): boolean => {
+    return (
+        puzzle[startRow + increaseRow]?.[startCol + increaseCol] === XMAS[1]
+        && puzzle[startRow + increaseRow * 2]?.[startCol + increaseCol * 2] === XMAS[2]
+        && puzzle[startRow + increaseRow * 3]?.[startCol + increaseCol * 3] === XMAS[3]
+    );
+}
 
 const positionCount = (puzzle: string[], rowIdx: number, colIdx: number): number => {
     let count = 0; // there could be more than a match for this position
 
-    if (puzzle[rowIdx].slice(colIdx, colIdx + 4) === XMAS) { // right
-        count += 1; // 3
-    } 
-
-    if (puzzle[rowIdx].slice(colIdx - 3, colIdx + 1) === XMAS.split('').reverse().join('')) { // left
-        count += 1; // 5
+    if (hasAdjacentMatch(puzzle, rowIdx, colIdx, 0, 1)) { // right
+        count += 1;
     }
 
-    if (puzzle[rowIdx]?.[colIdx] === XMAS[0] // down
-        && puzzle[rowIdx + 1]?.[colIdx] === XMAS[1]
-        && puzzle[rowIdx + 2]?.[colIdx] === XMAS[2]
-        && puzzle[rowIdx + 3]?.[colIdx] === XMAS[3]
-    ) {
-        count += 1; // 6
+    if (hasAdjacentMatch(puzzle, rowIdx, colIdx, 0, -1)) { // left
+        count += 1;
     }
 
-    if (puzzle[rowIdx]?.[colIdx] === XMAS[0] // up
-        && puzzle[rowIdx - 1]?.[colIdx] === XMAS[1]
-        && puzzle[rowIdx - 2]?.[colIdx] === XMAS[2]
-        && puzzle[rowIdx - 3]?.[colIdx] === XMAS[3]
-    ) {
-        count += 1; // 8
+    if (hasAdjacentMatch(puzzle, rowIdx, colIdx, 1, 0)) { // down
+        count += 1;
+    }
+
+    if (hasAdjacentMatch(puzzle, rowIdx, colIdx, -1, 0)) { // up
+        count += 1;
     }
 
     // TO DO: check diagonals
@@ -62,12 +53,9 @@ const getOccurrences = (puzzle: string[]): number => {
     return count;
 };
 
-const getPuzzle = (): string[] => {
-    return readInputByLines('./inputs/input-test.txt');
-}
 
 const main = (): number => {
-    const puzzle = getPuzzle();
+    const puzzle = readInputByLines('./inputs/input-test.txt');
 
     return getOccurrences(puzzle);
 }
