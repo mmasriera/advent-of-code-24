@@ -1,8 +1,6 @@
 
 import { readInputByLines } from '../utils/index.ts';
 
-type Reports = string[][];
-
 const XMAS = 'XMAS';
 
 const hasAdjacentMatch = (
