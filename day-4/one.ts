@@ -35,6 +35,21 @@ const positionCount = (puzzle: string[], rowIdx: number, colIdx: number): number
     }
 
     // TO DO: check diagonals
+    if (hasAdjacentMatch(puzzle, rowIdx, colIdx, 1, 1)) { // up-right
+        count += 1;
+    }
+
+    if (hasAdjacentMatch(puzzle, rowIdx, colIdx, 1, -1)) { // up-left
+        count += 1;
+    }
+
+    if (hasAdjacentMatch(puzzle, rowIdx, colIdx, -1, 1)) { // down-right
+        count += 1;
+    }
+
+    if (hasAdjacentMatch(puzzle, rowIdx, colIdx, -1, -1)) { // down-left
+        count += 1;
+    }
 
     return count;
 }
@@ -55,9 +70,9 @@ const getOccurrences = (puzzle: string[]): number => {
 
 
 const main = (): number => {
-    const puzzle = readInputByLines('./inputs/input-test.txt');
+    const puzzle = readInputByLines('./inputs/input-one.txt');
 
     return getOccurrences(puzzle);
 }
 
-console.log('result day 4, part 1:', main()); // 
+console.log('result day 4, part 1:', main()); // 2562
