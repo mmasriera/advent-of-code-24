@@ -1,4 +1,4 @@
-# adent-of-code-24
+# advent-of-code-24
 
 [advent of code 24](https://adventofcode.com/)
 
