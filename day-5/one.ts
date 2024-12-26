@@ -8,7 +8,7 @@ const getInputData = (): { orderingRules: OrderingRules; updates: Updates } => {
     const orderingRules: OrderingRules = {};
     const updates: Updates = [];
 
-    const input = readInputByLines('./inputs/input-test.txt');
+    const input = readInputByLines('./inputs/input-one.txt');
 
     input.forEach((line) => {
         if (line.includes('|')) {   
@@ -33,8 +33,20 @@ const getMiddleElement = (update: number[]): number => {
     return update[Math.floor(update.length / 2)];
 }
 
-const isCorrectUpdate = (update: number[], orderingRules: OrderingRules): boolean => {
-    return true;
+// TO DO: check performance of recursive VS iterative
+// orderingRules -> any difference if it's a global (apparently no bc it's passed by reference but it's an extra param for the recursive one)
+const isCorrectUpdate = ([page, ...rest]: number[], orderingRules: OrderingRules): boolean => {
+    if (!rest.length) {
+        return true
+    }
+
+    for (const elem of rest) {
+        if (!orderingRules[page]?.includes(elem)) { // not included or no page
+            return false;
+        }
+    }
+
+    return isCorrectUpdate(rest, orderingRules);
 }
 
 const main = (): number => {
@@ -46,4 +58,4 @@ const main = (): number => {
         .reduce((acc, curr) => acc + curr, 0);
 }
 
-console.log('result day 5, part 1:', main()); //
+console.log('result day 5, part 1:', main()); // 4957
