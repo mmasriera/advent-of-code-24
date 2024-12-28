@@ -1,61 +1,95 @@
 
 import { readInputByLines } from '../utils/index.ts';
 
-type OrderingRules = Record<number, number[]>;
-type Updates = number[][];
+const UP = '^';
+const RIGHT = '>';
+const DOWN = 'v';
+const LEFT = '<';
 
-const getInputData = (): { orderingRules: OrderingRules; updates: Updates } => {
-    const orderingRules: OrderingRules = {};
-    const updates: Updates = [];
+const BLOKCER = '#';
 
-    const input = readInputByLines('./inputs/input-one.txt');
+const DIRECTIONS = [UP, RIGHT, DOWN, LEFT];
 
-    input.forEach((line) => {
-        if (line.includes('|')) {   
-            const [pageX, pageY] = line.split('|').map(Number);
-
-            if (!orderingRules[pageX]) {    
-                orderingRules[pageX] = [];
+const findGuard = (map: string[]): [number, number] => {
+    for (let row = 0; row < map.length; row++) {
+        for (let cell = 0; cell < map[row].length; cell++) {
+            if (DIRECTIONS.includes(map[row][cell])) {
+                return [row, cell];
             }
-
-            orderingRules[pageX].push(pageY);
-        } else if (line.includes(',')) {
-            const update = line.split(',').map(Number);
-
-            updates.push(update);
-        }
-    });
-
-    return { orderingRules, updates };
-}
-
-const getMiddleElement = (update: number[]): number => {
-    return update[Math.floor(update.length / 2)];
-}
-
-// TO DO: check performance of recursive VS iterative
-// orderingRules -> any difference if it's a global (apparently no bc it's passed by reference but it's an extra param for the recursive one)
-const isCorrectUpdate = ([page, ...rest]: number[], orderingRules: OrderingRules): boolean => {
-    if (!rest.length) {
-        return true
-    }
-
-    for (const elem of rest) {
-        if (!orderingRules[page]?.includes(elem)) { // not included or no page
-            return false;
         }
     }
 
-    return isCorrectUpdate(rest, orderingRules);
+    return [0, 0];
+}
+
+const getNextPosition = (row: number, col: number, direction: string): [number, number] => {
+    switch (direction) {
+        case UP:
+            return [row - 1, col];
+        case RIGHT:
+            return [row, col + 1];
+        case DOWN:
+            return [row + 1, col];
+        case LEFT:
+            return [row, col - 1];
+        default: // won't happen
+            return [row, col];
+    }
+}
+
+const rotateDirection = (direction: string): string => {
+    const index = DIRECTIONS.indexOf(direction);
+    
+    return DIRECTIONS[(index + 1) % DIRECTIONS.length];
+}
+
+const countSteps = (map: string[]): number => {
+    let steps = 0;
+    let [row, col] = findGuard(map); // starting position
+    let direction = map[row][col];
+
+    const printMap = map.map(line => line.split(''));
+
+    while ( // while in map limits
+        (row >= 0)
+        && (col >= 0)
+        && (row < map.length - 1)
+        && (col < map[0].length - 1)
+    ) { 
+        // console.log('--------------------------------');
+        // console.log('row', row, 'col', col, 'cell', map[row][col]);
+
+        const [nextRow, nextCol] = getNextPosition(row, col, direction);
+        const nextCell = map[nextRow][nextCol];
+
+        // console.log('nextRow', nextRow, 'nextCol', nextCol);
+        // console.log('nextCell', nextCell);
+
+        if (nextCell === BLOKCER) {
+            // console.log('rotate', rotateDirection(direction));
+
+            direction = rotateDirection(direction);
+        } else {
+            // console.log('update');
+            // printMap[row][col] = 'X';
+            row = nextRow;
+            col = nextCol;
+
+            if (nextCell === '.') {
+                steps += 1;
+            }
+        }
+    }
+
+    // console.log(printMap.map(line => line.join('')).join('\n'));
+
+    return steps - 2;
 }
 
 const main = (): number => {
-    const { orderingRules, updates } = getInputData();
+    const map = readInputByLines('./inputs/input-one.txt');
 
-    return updates
-        .filter(update => isCorrectUpdate(update, orderingRules))
-        .map(getMiddleElement)
-        .reduce((acc, curr) => acc + curr, 0);
+    return countSteps(map);
 }
 
-console.log('result day 5, part 1:', main()); // 4957
+console.log('result day 6, part 1:', main()); // 5190 too high
