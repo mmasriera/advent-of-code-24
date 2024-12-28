@@ -30,7 +30,7 @@ const getNextPosition = (row: number, col: number, direction: string): [number, 
     } else if (direction === DOWN) {
         return [row + 1, col];
     } 
-    
+
     return [row, col - 1]; 
 };
 
@@ -44,19 +44,15 @@ const markMap = (map: string[][]): string[][] => {
     let [row, col] = findGuard(map); // starting position
     let direction = map[row][col];
 
-    while ( // while in map limits
-        (row >= 0)
-        && (col >= 0)
-        && (row <= map.length)
-        && (col <= map[0].length)
-    ) { 
+    while ( map[row]?.[col]) { 
+
         map[row][col] = MARK;
 
         const [nextRow, nextCol] = getNextPosition(row, col, direction);
         const nextCell = map[nextRow]?.[nextCol];
         
         if (!nextCell) {
-            break; // end of map
+            break; // out of map
         }
 
         if (nextCell === BLOKCER) {
