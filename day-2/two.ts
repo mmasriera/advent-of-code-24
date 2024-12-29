@@ -1,54 +1,51 @@
-
 import { readInputByLines } from '../utils/index.ts';
 
 type Reports = number[][];
 
 const getReportsFromInput = (): Reports => {
-    const reports: Reports = [];
+	const reports: Reports = [];
 
-    readInputByLines('./inputs/input-one.txt')
-        .forEach(line => {
-            reports.push(line.split(' ').map(Number));
-        });
+	readInputByLines('./inputs/input-one.txt').forEach((line) => {
+		reports.push(line.split(' ').map(Number));
+	});
 
-    return reports;
+	return reports;
 };
 
 const isIncreasing = (a: number, b: number): boolean => b > a;
 
 const isSafeReport = (report: number[]): boolean => {
-    const isIncreasingReport = isIncreasing(report[0], report[1]);
+	const isIncreasingReport = isIncreasing(report[0], report[1]);
 
-    for (let i = 1; i < report.length; i++) {
-        const hasSameDirection = isIncreasingReport === isIncreasing(report[i - 1], report[i]);
-        const diff = Math.abs(report[i] - report[i - 1]);
+	for (let i = 1; i < report.length; i++) {
+		const hasSameDirection = isIncreasingReport === isIncreasing(report[i - 1], report[i]);
+		const diff = Math.abs(report[i] - report[i - 1]);
 
-        if (!hasSameDirection || (diff < 1 || diff > 3)) {
-            return false;
-        }
-    }
+		if (!hasSameDirection || diff < 1 || diff > 3) {
+			return false;
+		}
+	}
 
-    return true;
+	return true;
 };
 
 const isSafeWithRetry = (report: number[]): boolean => {
-    for (let i = 0; i < report.length; i++) {
-        const copy = [...report];
+	for (let i = 0; i < report.length; i++) {
+		const copy = [...report];
 
-        copy.splice(i, 1);
+		copy.splice(i, 1);
 
-        if (isSafeReport(copy)) { // retry without the level i
-            return true;
-        }
-    }
+		if (isSafeReport(copy)) {
+			// retry without the level i
+			return true;
+		}
+	}
 
-    return false;
-}
+	return false;
+};
 
 const main = (): number => {
-    return getReportsFromInput()
-        .filter(isSafeWithRetry)
-        .length;
-}
+	return getReportsFromInput().filter(isSafeWithRetry).length;
+};
 
 console.log('result day 2, part 2:', main()); // 488

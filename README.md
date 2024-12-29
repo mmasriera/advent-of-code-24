@@ -9,3 +9,11 @@ using Deno 2.1.3
 cd day-1
 deno run --allow-read ./one.ts
 ```
+
+lint -> https://biomejs.dev/
+
+```sh
+deno run -A npm:@biomejs/biome check
+
+deno run -A npm:@biomejs/biome format --write
+```
