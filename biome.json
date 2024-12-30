@@ -8,7 +8,8 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": []
+		"ignore": [],
+		"include": ["**/*.ts"]
 	},
 	"formatter": {
 		"enabled": true,

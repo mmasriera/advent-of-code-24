@@ -1,5 +1,10 @@
 import { readInputByLines } from '../utils/index.ts';
 
+type Position = {
+	row: number,
+	col: number
+}
+
 const BLOCKER = '#';
 const GUARD = '^';
 
@@ -10,16 +15,16 @@ const DIRECTIONS = [
 	[0, -1], // left
 ];
 
-const findGuard = (map: string[]): [number, number] => {
+const findGuard = (map: string[]): Position => {
 	for (let row = 0; row < map.length; row++) {
-		for (let cell = 0; cell < map[row].length; cell++) {
-			if (map[row][cell] === GUARD) {
-				return [row, cell];
+		for (let col = 0; col < map[row].length; col++) {
+			if (map[row][col] === GUARD) {
+				return { row, col };
 			}
 		}
 	}
 
-	return [0, 0];
+	return { row: 0, col: 0 };
 };
 
 const isOutOfMap = (row: number, col: number, map: string[]): boolean => {
@@ -31,27 +36,24 @@ const isBlocker = (row: number, col: number, map: string[]): boolean => {
 };
 
 const countPositions = (map: string[]): number => {
-	const visitedPositions = new Set<string>(); // will save positions as strings: "1,2"
-
-	let [row, col] = findGuard(map); // starting position
+	const visitedPositions = new Map<string, Position>(); // will save positions as strings: "1,2"
+	let position = findGuard(map); // starting position
 	let direction = DIRECTIONS[0];
 
 	while (true) {
-		visitedPositions.add(`${row},${col}`);
-		const [nextRow, nextCol] = [row + direction[0], col + direction[1]];
+		visitedPositions.set(`${ position.row },${ position.col }`, { ...position });
+		const [nextRow, nextCol] = [position.row + direction[0], position.col + direction[1]];
 
 		if (isOutOfMap(nextRow, nextCol, map)) {
-			break;
+			return visitedPositions.size; // end
 		}
 
 		if (isBlocker(nextRow, nextCol, map)) {
 			direction = DIRECTIONS[(DIRECTIONS.indexOf(direction) + 1) % DIRECTIONS.length];
 		} else {
-			[row, col] = [nextRow, nextCol];
+			position = { row: nextRow, col: nextCol };
 		}
 	}
-
-	return visitedPositions.size;
 };
 
 const main = (): void => {
