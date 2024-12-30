@@ -10,7 +10,7 @@ const DIRECTIONS = [
 	[0, -1], // left
 ];
 
-const findGuard = (map: string[][]): [number, number] => {
+const findGuard = (map: string[]): [number, number] => {
 	for (let row = 0; row < map.length; row++) {
 		for (let cell = 0; cell < map[row].length; cell++) {
 			if (map[row][cell] === GUARD) {
@@ -30,7 +30,7 @@ const isBlocker = (row: number, col: number, map: string[]): boolean => {
 	return map[row][col] === BLOCKER;
 };
 
-const countPositions = (map: string[][]): number => {
+const countPositions = (map: string[]): number => {
 	const visitedPositions = new Set<string>(); // will save positions as strings: "1,2"
 
 	let [row, col] = findGuard(map); // starting position
