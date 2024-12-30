@@ -45,8 +45,7 @@ const countPositions = (map: string[]): number => {
 		}
 
 		if (isBlocker(nextRow, nextCol, map)) {
-			direction =
-				DIRECTIONS[(DIRECTIONS.indexOf(direction) + 1) % DIRECTIONS.length];
+			direction = DIRECTIONS[(DIRECTIONS.indexOf(direction) + 1) % DIRECTIONS.length];
 		} else {
 			[row, col] = [nextRow, nextCol];
 		}

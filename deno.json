@@ -1,5 +1,9 @@
 {
 	"imports": {
 		"@biomejs/biome": "npm:@biomejs/biome@^1.9.4"
+	},
+	"tasks": {
+		"check": "biome check",
+		"format": "biome format --write"
 	}
 }

@@ -33,10 +33,7 @@ const getMiddleElement = (update: number[]): number => {
 
 // TO DO: check performance of recursive VS iterative
 // orderingRules -> any difference if it's a global (apparently no bc it's passed by reference but it's an extra param for the recursive one)
-const isCorrectUpdate = (
-	[page, ...rest]: number[],
-	orderingRules: OrderingRules,
-): boolean => {
+const isCorrectUpdate = ([page, ...rest]: number[], orderingRules: OrderingRules): boolean => {
 	if (!rest.length) {
 		return true;
 	}
