@@ -1,19 +1,19 @@
 import { readInputByLines } from '../utils/index.ts';
 
-const UP = '^';
-const RIGHT = '>';
-const DOWN = 'v';
-const LEFT = '<';
+const BLOCKER = '#';
+const GUARD = '^';
 
-const BLOKCER = '#';
-const MARK = 'x';
-
-const DIRECTIONS = [UP, RIGHT, DOWN, LEFT];
+const DIRECTIONS = [
+	[-1, 0], // up
+	[0, 1], // right
+	[1, 0], // down
+	[0, -1], // left
+];
 
 const findGuard = (map: string[][]): [number, number] => {
 	for (let row = 0; row < map.length; row++) {
 		for (let cell = 0; cell < map[row].length; cell++) {
-			if (DIRECTIONS.includes(map[row][cell])) {
+			if (map[row][cell] === GUARD) {
 				return [row, cell];
 			}
 		}
@@ -22,73 +22,43 @@ const findGuard = (map: string[][]): [number, number] => {
 	return [0, 0];
 };
 
-const getNextPosition = (
-	row: number,
-	col: number,
-	direction: string,
-): [number, number] => {
-	if (direction === UP) {
-		return [row - 1, col];
-	}
-
-	if (direction === RIGHT) {
-		return [row, col + 1];
-	}
-
-	if (direction === DOWN) {
-		return [row + 1, col];
-	}
-
-	return [row, col - 1];
+const isOutOfMap = (row: number, col: number, map: string[]): boolean => {
+	return row < 0 || row >= map.length || col < 0 || col >= map[row].length;
 };
 
-const rotateDirection = (direction: string): string => {
-	const index = DIRECTIONS.indexOf(direction);
-
-	return DIRECTIONS[(index + 1) % DIRECTIONS.length];
+const isBlocker = (row: number, col: number, map: string[]): boolean => {
+	return map[row][col] === BLOCKER;
 };
 
-const markMap = (map: string[][]): string[][] => {
+const countPositions = (map: string[][]): number => {
+	const visitedPositions = new Set<string>(); // will save positions as strings: "1,2"
+
 	let [row, col] = findGuard(map); // starting position
-	let direction = map[row][col];
+	let direction = DIRECTIONS[0];
 
-	while (map[row]?.[col]) {
-		map[row][col] = MARK;
+	while (true) {
+		visitedPositions.add(`${row},${col}`);
+		const [nextRow, nextCol] = [row + direction[0], col + direction[1]];
 
-		const [nextRow, nextCol] = getNextPosition(row, col, direction);
-		const nextCell = map[nextRow]?.[nextCol];
-
-		if (!nextCell) {
-			break; // out of map
+		if (isOutOfMap(nextRow, nextCol, map)) {
+			break;
 		}
 
-		if (nextCell === BLOKCER) {
-			direction = rotateDirection(direction);
+		if (isBlocker(nextRow, nextCol, map)) {
+			direction =
+				DIRECTIONS[(DIRECTIONS.indexOf(direction) + 1) % DIRECTIONS.length];
 		} else {
-			row = nextRow;
-			col = nextCol;
+			[row, col] = [nextRow, nextCol];
 		}
 	}
 
-	return map;
+	return visitedPositions.size;
 };
 
-const countMarks = (map: string[][]): number => {
-	return map.reduce(
-		(acc, line) => acc + line.filter((cell) => cell === MARK).length,
-		0,
-	);
+const main = (): void => {
+	const map = readInputByLines('./inputs/input-one.txt');
+
+	console.log('result day 6, part 1:', countPositions(map)); // 4789
 };
 
-// TO DO: use a structure of visited positions & cehck performance
-const main = (): number => {
-	const map = readInputByLines('./inputs/input-one.txt').map((line) =>
-		line.split(''),
-	);
-	// need to mark them because we count DEFFERENT positions, this or have a structure of visited positions
-	const markedMap = markMap(map);
-
-	return countMarks(markedMap);
-};
-
-console.log('result day 6, part 1:', main()); // 4789
+main();
