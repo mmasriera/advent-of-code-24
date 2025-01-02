@@ -35,7 +35,7 @@ const isBlocker = (row: number, col: number, map: string[]): boolean => {
 	return map[row][col] === BLOCKER;
 };
 
-const countPositions = (map: string[]): number => {
+const getVisitedPositions = (map: string[]): Map<string, Position> => {
 	const visitedPositions = new Map<string, Position>(); // will save positions as strings: "1,2"
 	let position = findGuard(map); // starting position
 	let direction = DIRECTIONS[0];
@@ -45,7 +45,7 @@ const countPositions = (map: string[]): number => {
 		const [nextRow, nextCol] = [position.row + direction[0], position.col + direction[1]];
 
 		if (isOutOfMap(nextRow, nextCol, map)) {
-			return visitedPositions.size; // end
+			return visitedPositions; // end
 		}
 
 		if (isBlocker(nextRow, nextCol, map)) {
@@ -57,9 +57,15 @@ const countPositions = (map: string[]): number => {
 };
 
 const main = (): void => {
-	const map = readInputByLines('./inputs/input-one.txt');
+	const map = readInputByLines('./inputs/input-test.txt').map((line) => line.split(''));
+	const visitedPositions = getVisitedPositions(map);
 
-	console.log('result day 6, part 1:', countPositions(map)); // 4789
+	for (const visitedPosition of visitedPositions.values()) {
+		console.log(visitedPosition);
+	}
+
+	console.log('result day 6, part 2:', visitedPositions.size); //1304
+
 };
 
 main();

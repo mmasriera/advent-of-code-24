@@ -2,6 +2,7 @@
   "version": "4",
   "specifiers": {
     "npm:@biomejs/biome@*": "1.9.4",
+    "npm:@biomejs/biome@1.9.4": "1.9.4",
     "npm:@biomejs/biome@^1.9.4": "1.9.4"
   },
   "npm": {

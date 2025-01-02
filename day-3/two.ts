@@ -3,10 +3,7 @@ import { readInputFile } from '../utils/index.ts';
 const sumMultiplications = (candidate: string): number => {
 	const matches = candidate.matchAll(/mul\((\d+),(\d+)\)/g);
 
-	return matches.reduce(
-		(acc, match) => acc + Number(match[1]) * Number(match[2]),
-		0,
-	);
+	return matches.reduce((acc, match) => acc + Number(match[1]) * Number(match[2]), 0);
 };
 
 const main = (): number => {
