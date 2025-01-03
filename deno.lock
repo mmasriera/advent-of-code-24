@@ -1,9 +1,15 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@std/assert@*": "1.0.10",
     "npm:@biomejs/biome@*": "1.9.4",
     "npm:@biomejs/biome@1.9.4": "1.9.4",
     "npm:@biomejs/biome@^1.9.4": "1.9.4"
+  },
+  "jsr": {
+    "@std/assert@1.0.10": {
+      "integrity": "59b5cbac5bd55459a19045d95cc7c2ff787b4f8527c0dd195078ff6f9481fbb3"
+    }
   },
   "npm": {
     "@biomejs/biome@1.9.4": {
