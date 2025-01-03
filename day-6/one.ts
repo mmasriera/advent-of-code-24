@@ -1,9 +1,9 @@
 import { readInputByLines } from '../utils/index.ts';
 
 type Position = {
-	row: number,
-	col: number
-}
+	row: number;
+	col: number;
+};
 
 const BLOCKER = '#';
 const GUARD = '^';
@@ -41,7 +41,7 @@ const countPositions = (map: string[]): number => {
 	let direction = DIRECTIONS[0];
 
 	while (true) {
-		visitedPositions.set(`${ position.row },${ position.col }`, { ...position });
+		visitedPositions.set(`${position.row},${position.col}`, { ...position });
 		const [nextRow, nextCol] = [position.row + direction[0], position.col + direction[1]];
 
 		if (isOutOfMap(nextRow, nextCol, map)) {
