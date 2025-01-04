@@ -27,6 +27,10 @@ const getAntennaPositions = (map: string[]): Map<string, Position[]> => {
 	return sameFreqAntennas;
 };
 
+const isInMap = (row: number, col: number, limitRows: number, limitCols: number): boolean => {
+	return row >= 0 && col >= 0 && row < limitRows && col < limitCols;
+};
+
 const getAntinodes = (positions: Position[], limitRows: number, limitCols: number): Set<string> => {
 	const antinodes = new Set<string>();
 
@@ -36,19 +40,23 @@ const getAntinodes = (positions: Position[], limitRows: number, limitCols: numbe
 			const diffCols = positions[j].col - positions[i].col;
 
 			// first antinode (in one direction)
-			const topLeftRow = positions[i].row - diffRows;
-			const topLeftCol = positions[i].col - diffCols;
+			const topLeft = { row: positions[i].row, col: positions[i].col };
 
-			if (topLeftCol >= 0 && topLeftRow >= 0 && topLeftCol < limitCols && topLeftRow < limitRows) {
-				antinodes.add(`${topLeftRow},${topLeftCol}`);
+			while (isInMap(topLeft.row, topLeft.col, limitRows, limitCols)) {
+				antinodes.add(`${topLeft.row},${topLeft.col}`);
+
+				topLeft.row -= diffRows;
+				topLeft.col -= diffCols;
 			}
 
 			// second antinode (in the opposite direction)
-			const bottomRightRow = positions[j].row + diffRows;
-			const bottomRightCol = positions[j].col + diffCols;
+			const bottomRight = { row: positions[j].row, col: positions[j].col };
 
-			if (bottomRightCol >= 0 && bottomRightRow >= 0 && bottomRightCol < limitCols && bottomRightRow < limitRows) {
-				antinodes.add(`${bottomRightRow},${bottomRightCol}`);
+			while (isInMap(bottomRight.row, bottomRight.col, limitRows, limitCols)) {
+				antinodes.add(`${bottomRight.row},${bottomRight.col}`);
+
+				bottomRight.row += diffRows;
+				bottomRight.col += diffCols;
 			}
 		}
 	}
@@ -70,7 +78,7 @@ const countTotalAntinodes = (map: string[]): number => {
 const main = (): void => {
 	const map = readInputByLines('./inputs/input.txt');
 
-	console.log('result day 8, part 1:', countTotalAntinodes(map)); // 351
+	console.log('result day 8, part 1:', countTotalAntinodes(map)); // 1259
 };
 
 main();
