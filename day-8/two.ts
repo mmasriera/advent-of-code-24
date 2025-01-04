@@ -27,36 +27,36 @@ const getAntennaPositions = (map: string[]): Map<string, Position[]> => {
 	return sameFreqAntennas;
 };
 
-const isInMap = (row: number, col: number, limitRows: number, limitCols: number): boolean => {
-	return row >= 0 && col >= 0 && row < limitRows && col < limitCols;
+const isInMap = (row: number, col: number, numRows: number, numCols: number): boolean => {
+	return row >= 0 && col >= 0 && row < numRows && col < numCols;
 };
 
-const getAntinodes = (positions: Position[], limitRows: number, limitCols: number): Set<string> => {
+const getAntinodes = (positions: Position[], numRows: number, numCols: number): Set<string> => {
 	const antinodes = new Set<string>();
 
 	for (let i = 0; i < positions.length; i += 1) {
 		for (let j = i + 1; j < positions.length; j += 1) {
-			const diffRows = positions[j].row - positions[i].row;
-			const diffCols = positions[j].col - positions[i].col;
+			// vector between two antennas
+			const [v1, v2] = [positions[j].row - positions[i].row, positions[j].col - positions[i].col];
 
 			// first antinode (in one direction)
 			const topLeft = { row: positions[i].row, col: positions[i].col };
 
-			while (isInMap(topLeft.row, topLeft.col, limitRows, limitCols)) {
+			while (isInMap(topLeft.row, topLeft.col, numRows, numCols)) {
 				antinodes.add(`${topLeft.row},${topLeft.col}`);
 
-				topLeft.row -= diffRows;
-				topLeft.col -= diffCols;
+				topLeft.row -= v1;
+				topLeft.col -= v2;
 			}
 
 			// second antinode (in the opposite direction)
 			const bottomRight = { row: positions[j].row, col: positions[j].col };
 
-			while (isInMap(bottomRight.row, bottomRight.col, limitRows, limitCols)) {
+			while (isInMap(bottomRight.row, bottomRight.col, numRows, numCols)) {
 				antinodes.add(`${bottomRight.row},${bottomRight.col}`);
 
-				bottomRight.row += diffRows;
-				bottomRight.col += diffCols;
+				bottomRight.row += v1;
+				bottomRight.col += v2;
 			}
 		}
 	}

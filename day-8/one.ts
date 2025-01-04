@@ -27,28 +27,30 @@ const getAntennaPositions = (map: string[]): Map<string, Position[]> => {
 	return sameFreqAntennas;
 };
 
-const getAntinodes = (positions: Position[], limitRows: number, limitCols: number): Set<string> => {
+const isInMap = (row: number, col: number, numRows: number, numCols: number): boolean => {
+	return row >= 0 && col >= 0 && row < numRows && col < numCols;
+};
+
+const getAntinodes = (positions: Position[], numRows: number, numCols: number): Set<string> => {
 	const antinodes = new Set<string>();
 
 	for (let i = 0; i < positions.length; i += 1) {
 		for (let j = i + 1; j < positions.length; j += 1) {
-			const diffRows = positions[j].row - positions[i].row;
-			const diffCols = positions[j].col - positions[i].col;
+			// vector between two antennas
+			const [v1, v2] = [positions[j].row - positions[i].row, positions[j].col - positions[i].col];
 
 			// first antinode (top left)
-			const topLeftRow = positions[i].row - diffRows;
-			const topLeftCol = positions[i].col - diffCols;
+			const [x1, y1] = [positions[i].row - v1, positions[i].col - v2];
 
-			if (topLeftCol >= 0 && topLeftRow >= 0 && topLeftCol < limitCols && topLeftRow < limitRows) {
-				antinodes.add(`${topLeftRow},${topLeftCol}`);
+			if (isInMap(x1, y1, numRows, numCols)) {
+				antinodes.add(`${x1},${y1}`);
 			}
 
 			// second antinode (bottom right)
-			const bottomRightRow = positions[j].row + diffRows;
-			const bottomRightCol = positions[j].col + diffCols;
+			const [x2, y2] = [positions[j].row + v1, positions[j].col + v2];
 
-			if (bottomRightCol >= 0 && bottomRightRow >= 0 && bottomRightCol < limitCols && bottomRightRow < limitRows) {
-				antinodes.add(`${bottomRightRow},${bottomRightCol}`);
+			if (isInMap(x2, y2, numRows, numCols)) {
+				antinodes.add(`${x2},${y2}`);
 			}
 		}
 	}
