@@ -2,18 +2,17 @@
 
 [advent of code 24](https://adventofcode.com/)
 
-using Deno 2.1.3
+## using Deno 2.1.3
 
 ```sh
-# run part code
+# run code
 cd day-1
 deno run --allow-read ./one.ts
 ```
 
-lint -> https://biomejs.dev/
+## lint & format -> [biomejs 1.9.4](https://biomejs.dev/)
 
 ```sh
-deno run -A npm:@biomejs/biome check
-
-deno run -A npm:@biomejs/biome format --write
+deno task check
+deno task format
 ```
