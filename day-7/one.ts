@@ -1,10 +1,5 @@
 import { readInputByLines } from '../utils/index.ts';
 
-const OPERATIONS = {
-	sum: (a: number, b: number): number => a + b,
-	mult: (a: number, b: number): number => a * b,
-}
-
 const buildCandidates = (input: string): [number, number[]] => {
 	const [left, right] = input.split(': ');
 	const numbers = right.split(' ').map(Number);
@@ -13,27 +8,20 @@ const buildCandidates = (input: string): [number, number[]] => {
 };
 
 const hasValidEquation = ([value, [first, second, ...rest]]: [number, number[]]): boolean => {
-	console.log('iteration', value, '=', first, second, rest);
-
-	const results = [
-		OPERATIONS.sum(first, second),
-		OPERATIONS.mult(first, second)
-	];
+	const sum = first + second;
+	const mult = first * second;
 
 	if (rest.length === 0) {
-		return results.includes(value);
+		return sum === value || mult === value;
 	}
 
-	return hasValidEquation([value, [results[0], ...rest]])
-		|| hasValidEquation([value, [results[1], ...rest]])
+	return hasValidEquation([value, [sum, ...rest]]) || hasValidEquation([value, [mult, ...rest]]);
 };
 
 const calibrationResult = (input: string[]): number => {
 	const candidates = input.map(buildCandidates);
 
-	return candidates
-		.filter(hasValidEquation)
-		.reduce((acc, [value, _]) => acc + value, 0);
+	return candidates.filter(hasValidEquation).reduce((acc, [value, _]) => acc + value, 0);
 };
 
 const main = (): void => {
