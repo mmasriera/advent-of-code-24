@@ -18,13 +18,11 @@ const getBlocks = (diskMap: string): Block[] => {
 	return blocks;
 };
 
-const compact = (blocks: Block[]): Block[] => {
+const compact = (blocks: Block[]): number[] => {
 	let i = 0;
 	let j = blocks.length - 1;
 
 	while (i < j) {
-		// console.log(counter, '--> blocks', blocks, i, j);
-
 		if (blocks[i].space > 0) {
 			const last = blocks[j].file.slice(-1);
 	
@@ -42,22 +40,21 @@ const compact = (blocks: Block[]): Block[] => {
 		}
 	}
 
-	return blocks;
+	return blocks.reduce((acc, block) => {
+		const numbers = Array.from(block.file).map(Number);
+
+		return acc.concat(numbers);
+	}, [] as number[]);
 };
 
-// opt 1: build a representation and move 2 pointers
-// opt 2: use a structure to keep track of the free space and the blocks
-
 const main = (): void => {
-	const diskMap = readInputByLines('./inputs/test.txt')[0]; // may need to read as stream (1 line of 19999 chars)
+	const diskMap = readInputByLines('./inputs/input.txt')[0]; // may need to read as stream (1 line of 19999 chars)
 	const blocks = getBlocks(diskMap);
-	const result = compact(blocks).reduce((acc, block) => acc + block.file, '');
+	const compacted = compact(blocks);
 
-	const checkSum = Array.from(result).reduce((acc, char, idx) => {
-		return acc + Number(char) * idx;
-	}, 0);
+	const checkSum = compacted.reduce((acc, id, idx) => acc + id * idx, 0);
 
-	console.log('result day 9, part 1:', checkSum); //
+	console.log('result day 9, part 1:', checkSum); // 89312744865 is too low
 };
 
 main();
