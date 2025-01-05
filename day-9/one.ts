@@ -1,7 +1,7 @@
 import { readInputByLines } from '../utils/index.ts';
 
 type Block = {
-	file: string[];
+	file: string;
 	space: number;
 };
 
