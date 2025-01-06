@@ -5,56 +5,51 @@ type Block = {
 	space: number;
 };
 
-const getBlocks = (diskMap: string): Block[] => {
-	const blocks: Block[] = [];
+const makeDisk = (line: string): { disk: number[]; freeIndexes: number[] } => {
+	const disk = [];
+	const freeIndexes = [];
+	let id = 0;
 
-	for (let i = 0; i < diskMap.length; i += 2) {
-		blocks.push({
-			file: new Array(Number(diskMap[i])).fill(String(i / 2)).join(''),
-			space: Number(diskMap[i + 1]),
-		});
-	}
+	for (let i = 0; i < line.length; i += 1) {
+		const blocks = new Array(Number(line[i]));
 
-	return blocks;
-};
-
-const compact = (blocks: Block[]): number[] => {
-	let i = 0;
-	let j = blocks.length - 1;
-
-	while (i < j) {
-		if (blocks[i].space > 0) {
-			const last = blocks[j].file.slice(-1);
-	
-			if (last) {
-				blocks[i].file += last;
-				blocks[i].space -= 1;
-	
-				blocks[j].file = blocks[j].file.slice(0, -1);
-				blocks[j].space += 1;
-			} else {
-				j -= 1;
-			}
+		if (i % 2 === 0) {
+			disk.push(...blocks.fill(id));
+			id += 1;
 		} else {
-			i += 1;
+			for (let idx = disk.length; idx < disk.length + blocks.length; idx += 1) {
+				freeIndexes.push(idx);
+			}
+			disk.push(...blocks.fill(-1)); // free space
 		}
 	}
 
-	return blocks.reduce((acc, block) => {
-		const numbers = Array.from(block.file).map(Number);
+	return { disk, freeIndexes };
+};
 
-		return acc.concat(numbers);
-	}, [] as number[]);
+const compact = (disk: number[], freeIndexes: number[]): number[] => {
+	for (const freeIndex of freeIndexes) {
+
+		while (disk[disk.length - 1] === -1) {
+			disk.pop();
+		}
+
+		if (disk.length > freeIndex) {
+			// biome-ignore lint/style/noNonNullAssertion: <explanation>
+			disk[freeIndex] = disk.pop()!;
+		}
+	}
+
+	return disk;
 };
 
 const main = (): void => {
-	const diskMap = readInputByLines('./inputs/input.txt')[0]; // may need to read as stream (1 line of 19999 chars)
-	const blocks = getBlocks(diskMap);
-	const compacted = compact(blocks);
+	const line = readInputByLines('./inputs/input.txt')[0];
+	const { disk, freeIndexes } = makeDisk(line);
+	const compacted = compact(disk, freeIndexes);
+	const checksum = compacted.reduce((acc, curr, idx) => acc + curr * (idx), 0);
 
-	const checkSum = compacted.reduce((acc, id, idx) => acc + id * idx, 0);
-
-	console.log('result day 9, part 1:', checkSum); // 89312744865 is too low
+	console.log('result day 9, part 1:', checksum); // 6283170117911
 };
 
 main();
