@@ -1,5 +1,10 @@
 import { readInputByLines } from '../utils/index.ts';
 
+type freeBlock = {
+	idx: number,
+	size: number
+}
+
 const makeDisk = (line: string): { disk: number[]; freeIndexes: number[] } => {
 	const disk = [];
 	const freeIndexes = [];
@@ -38,12 +43,12 @@ const compact = (disk: number[], freeIndexes: number[]): number[] => {
 };
 
 const main = (): void => {
-	const line = readInputByLines('./inputs/input.txt')[0];
+	const line = readInputByLines('./inputs/test.txt')[0];
 	const { disk, freeIndexes } = makeDisk(line);
-	const compacted = compact(disk, freeIndexes);
-	const checksum = compacted.reduce((acc, curr, idx) => acc + curr * (idx), 0);
+	// const compacted = compact(disk, freeIndexes);
+	// const checksum = compacted.reduce((acc, curr, idx) => acc + curr * (idx), 0);
 
-	console.log('result day 9, part 1:', checksum); // 6283170117911
+	console.log('result day 9, part 1:', freeIndexes); // 6283170117911
 };
 
 main();
