@@ -27,20 +27,32 @@ const makeDisk = (line: string): { disk: number[]; freeIndexes: number[] } => {
 	return { disk, freeIndexes };
 };
 
-const compact = (disk: number[], freeIndexes: number[]): number[] => {
-	for (const freeIndex of freeIndexes) {
-		while (disk[disk.length - 1] === -1) {
-			disk.pop();
-		}
+// const compact = (disk: number[], freeIndexes: number[]): number[] => {
+// 	// for (const freeIndex of freeIndexes) {
+// 	// 	while (disk[disk.length - 1] === -1) {
+// 	// 		disk.pop();
+// 	// 	}
 
-		if (disk.length > freeIndex) {
-			// biome-ignore lint/style/noNonNullAssertion: pop will always return a value
-			disk[freeIndex] = disk.pop()!;
-		}
-	}
+// 	// 	if (disk.length > freeIndex) {
+// 	// 		// biome-ignore lint/style/noNonNullAssertion: pop will always return a value
+// 	// 		disk[freeIndex] = disk.pop()!;
+// 	// 	}
+// 	// }
 
-	return disk;
-};
+// 	// return disk;
+
+// 	for (let lastIdx = disk.length; lastIdx >= 0; --lastIdx) {
+
+// 		let block = '';
+
+// 		// while (lastIdx !== -1) {
+// 		// 	block += 
+// 		// }
+// 	}
+
+
+// 	return disk;
+// };
 
 const main = (): void => {
 	const line = readInputByLines('./inputs/test.txt')[0];
@@ -48,7 +60,7 @@ const main = (): void => {
 	// const compacted = compact(disk, freeIndexes);
 	// const checksum = compacted.reduce((acc, curr, idx) => acc + curr * (idx), 0);
 
-	console.log('result day 9, part 1:', freeIndexes); // 6283170117911
+	console.log('result day 9, part 1:', disk, freeIndexes); // 6283170117911
 };
 
 main();
