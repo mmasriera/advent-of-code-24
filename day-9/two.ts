@@ -54,8 +54,6 @@ const compact = (disk: number[], freeIndexes: freeBlock[]): number[] => {
 				freeIndex.size -= block.length;
 				freeIndex.idx += block.length;
 
-				console.log('disk update', disk.join('').replaceAll('-1', '.'));
-
 				break;
 			}
 		}
@@ -66,14 +64,14 @@ const compact = (disk: number[], freeIndexes: freeBlock[]): number[] => {
 }
 
 const main = (): void => {
-	const line = readInputByLines('./inputs/test.txt')[0];
+	const line = readInputByLines('./inputs/input.txt')[0];
 	const { disk, freeIndexes } = makeDisk(line);
 	const compacted = compact(disk, freeIndexes);
 	const checksum = compacted
 		.map(value => value === -1 ? 0 : value)
 		.reduce((acc, curr, idx) => acc + curr * (idx), 0);
 
-	console.log('result day 9, part 2:', checksum);
+	console.log('result day 9, part 2:', checksum); // 6307653242596
 };
 
 main();
