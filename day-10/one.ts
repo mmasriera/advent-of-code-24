@@ -1,4 +1,3 @@
-
 import { readInputByLines } from '../utils/index.ts';
 
 type Position = { x: number; y: number };
@@ -29,7 +28,7 @@ const calculateScores = (map: number[][], { x, y }: Position, results: Set<strin
 		const value = map[x]?.[y];
 		const nextValue = map[x + updateX]?.[y + updateY];
 
-		if (nextValue !== (value + 1)) {
+		if (nextValue !== value + 1) {
 			continue;
 		}
 
