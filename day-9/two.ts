@@ -1,10 +1,9 @@
-
 import { readInputByLines } from '../utils/index.ts';
 
 type freeBlock = {
-	idx: number,
-	size: number
-}
+	idx: number;
+	size: number;
+};
 
 const makeDisk = (line: string): { disk: number[]; freeIndexes: freeBlock[] } => {
 	const disk = [];
@@ -45,7 +44,7 @@ const compact = (disk: number[], freeIndexes: freeBlock[]): number[] => {
 
 		// fit lastblock in freeIndexes
 		for (const freeIndex of freeIndexes) {
-			if (freeIndex.size >= block.length && (freeIndex.idx < z)) {
+			if (freeIndex.size >= block.length && freeIndex.idx < z) {
 				for (let idx = 0; idx < block.length; idx += 1) {
 					disk[freeIndex.idx + idx] = block[idx]; // place element of block in a free space
 					disk[z + idx + 1] = -1; // free from the block at the end
@@ -58,18 +57,15 @@ const compact = (disk: number[], freeIndexes: freeBlock[]): number[] => {
 			}
 		}
 	}
-	
 
 	return disk;
-}
+};
 
 const main = (): void => {
 	const line = readInputByLines('./inputs/input.txt')[0];
 	const { disk, freeIndexes } = makeDisk(line);
 	const compacted = compact(disk, freeIndexes);
-	const checksum = compacted
-		.map(value => value === -1 ? 0 : value)
-		.reduce((acc, curr, idx) => acc + curr * (idx), 0);
+	const checksum = compacted.map((value) => (value === -1 ? 0 : value)).reduce((acc, curr, idx) => acc + curr * idx, 0);
 
 	console.log('result day 9, part 2:', checksum); // 6307653242596
 };

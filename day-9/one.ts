@@ -41,7 +41,7 @@ const main = (): void => {
 	const line = readInputByLines('./inputs/input.txt')[0];
 	const { disk, freeIndexes } = makeDisk(line);
 	const compacted = compact(disk, freeIndexes);
-	const checksum = compacted.reduce((acc, curr, idx) => acc + curr * (idx), 0);
+	const checksum = compacted.reduce((acc, curr, idx) => acc + curr * idx, 0);
 
 	console.log('result day 9, part 1:', checksum); // 6283170117911
 };
