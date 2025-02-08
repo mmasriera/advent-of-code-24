@@ -45,7 +45,6 @@ const calculateRatings = (map: number[][], { x, y }: Position, ratings: Ratings)
 
 const main = (): void => {
 	const map = readInputByLines('./inputs/input.txt').map((line) => line.split('').map(Number));
-
 	const ratings: Ratings = {};
 
 	findZeroPositions(map).forEach(({ x, y }) => {
@@ -54,7 +53,7 @@ const main = (): void => {
 
 	const sum = Object.values(ratings).reduce((acc, curr) => acc + curr, 0);
 
-	console.log('results', ratings, sum);
+	console.log('result day 10, part 2:', sum); // 1242
 };
 
 main();
