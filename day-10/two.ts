@@ -1,6 +1,7 @@
 import { readInputByLines } from '../utils/index.ts';
 
 type Position = { x: number; y: number };
+type Ratings = Record<string, number>;
 
 const findZeroPositions = (map: number[][]): Position[] => {
 	const zeroPositions: Position[] = [];
@@ -23,7 +24,7 @@ const DIRECTIONS = [
 	{ x: 0, y: 1 },
 ];
 
-const calculateScores = (map: number[][], { x, y }: Position, results: Set<string>): void => {
+const calculateRatings = (map: number[][], { x, y }: Position, ratings: Ratings): void => {
 	for (const { x: updateX, y: updateY } of DIRECTIONS) {
 		const value = map[x]?.[y];
 		const nextValue = map[x + updateX]?.[y + updateY];
@@ -33,29 +34,27 @@ const calculateScores = (map: number[][], { x, y }: Position, results: Set<strin
 		}
 
 		if (nextValue === 9) {
-			results.add(`${x + updateX},${y + updateY}`);
+			const key = `${x + updateX},${y + updateY}`;
+
+			ratings[key] = (ratings[key] ?? 0) + 1; // count on the 9's
 		}
 
-		calculateScores(map, { x: x + updateX, y: y + updateY }, results);
+		calculateRatings(map, { x: x + updateX, y: y + updateY }, ratings);
 	}
-};
-
-const findScore = (zeroPosition: Position, map: number[][]): number => {
-	// TO DO: too side-effected, use return value instead of updating endPositions
-	const endPositions = new Set<string>(); // easier to compare
-
-	calculateScores(map, zeroPosition, endPositions);
-
-	return endPositions.size;
 };
 
 const main = (): void => {
 	const map = readInputByLines('./inputs/input.txt').map((line) => line.split('').map(Number));
-	const zeroPositions = findZeroPositions(map);
-	const scores = zeroPositions.map((position) => findScore(position, map));
-	const sum = scores.reduce((acc, curr) => acc + curr, 0);
 
-	console.log('result day 10, part 1:', sum); // 629
+	const ratings: Ratings = {};
+
+	findZeroPositions(map).forEach(({ x, y }) => {
+		calculateRatings(map, { x, y }, ratings);
+	});
+
+	const sum = Object.values(ratings).reduce((acc, curr) => acc + curr, 0);
+
+	console.log('results', ratings, sum);
 };
 
 main();
