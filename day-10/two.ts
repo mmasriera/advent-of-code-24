@@ -1,5 +1,7 @@
 import { readInputByLines } from '../utils/index.ts';
 
+// DFS
+
 type Position = { x: number; y: number };
 type Ratings = Record<string, number>;
 
