@@ -29,10 +29,10 @@ const BLINKS = 25;
 const main = (): void => {
 	let stones = readInputByLines('./inputs/input.txt')[0].split(' ');
 
-	for (let i = 0; i < BLINKS; i += 1) {
+	for (let i = 1; i <= BLINKS; i += 1) {
 		stones = updateStones(stones);
 	}
-
+	
 	console.log('result day 11, part 1:', stones.length); // 183248
 };
 
