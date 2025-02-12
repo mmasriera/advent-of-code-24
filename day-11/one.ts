@@ -1,10 +1,5 @@
 import { readInputByLines } from '../utils/index.ts';
 
-/*
-	alt: 
-		pass "stones" array to updateStones and update it on each iteration
-*/
-
 const removeLeadingZero = (n: string): string => Number(n).toString();
 
 const updateStones = (stones: string[]): string[] => {

@@ -1,66 +1,56 @@
+/*
+	DFS + memoization
+*/
+
 import { readInputByLines } from '../utils/index.ts';
 
-/*
-	alt: 
-		pass "stones" array to updateStones and update it on each iteration
-*/
+const BLINKS = 75;
+const CACHE: Record<string, number> = {}; // key: "stone,blinks" -> we need the stone and the blink/step to know the count
+
+const getKey = (stone: string, blinks: number): string => `${stone},${blinks}`;
 
 const removeLeadingZero = (n: string): string => Number(n).toString();
 
-const CACHE_SPLITS: Record<string, string[]> = {};
-const CACHE_2048: Record<string, string> = {};
-
-const updateStones = (stones: string[]): string[] => {
-	const result: string[] = [];
-
-	for (const stone of stones) {
-		if (stone === '0') {
-			result.push('1');
-		} else if (stone.length % 2 === 0) {
-			if (CACHE_SPLITS[stone]) {
-				result.push(...CACHE_SPLITS[stone]);
-			} else {
-				const values = [removeLeadingZero(stone.slice(0, stone.length / 2)), removeLeadingZero(stone.slice(stone.length / 2))];
-
-				CACHE_SPLITS[stone] = values;
-				
-				result.push(...values);
-			}
-		} else {
-			if (CACHE_2048[stone]) {
-				result.push(CACHE_2048[stone]);
-			} else {
-				const value = (Number(stone) * 2024).toString();
-
-				CACHE_2048[stone] = value;
-				
-			}
-		}
+const getCount = (stone: string, blinks: number): number => {
+	if (blinks === 0) {
+		return 1; // base case
 	}
+
+	const key = getKey(stone, blinks);
+
+	if (CACHE[key]) {
+		return CACHE[key];
+	}
+
+	let result = 0;
+
+	if (stone === '0') {
+		result = getCount('1', blinks - 1);
+	} else if (stone.length % 2 === 0) {
+		const left = removeLeadingZero(stone.slice(0, stone.length / 2));
+		const right = removeLeadingZero(stone.slice(stone.length / 2));
+
+		result = getCount(left, blinks - 1) + getCount(right, blinks - 1);
+	} else {
+		result = getCount((Number(stone) * 2024).toString(), blinks - 1);
+	}
+
+	CACHE[key] = result;
+
 	return result;
 };
-
-const BLINKS = 50;
 
 const main = (): void => {
 	const stones = readInputByLines('./inputs/input.txt')[0].split(' ');
 	let result = 0;
 
 	for (const stone of stones) {
-		let stoneOutcome = [stone];
+		const count = getCount(stone, BLINKS);
 
-		console.log('stone', stone);
-
-		for (let i = 1; i <= BLINKS; i += 1) {
-			stoneOutcome = updateStones(stoneOutcome);
-
-			console.log('iteration', i);
-		}
-
-		result += stoneOutcome.length;
+		result += count;
 	}
 	
-	console.log('result day 11, part 2:', result); // 
+	console.log('result day 11, part 2:', result); // 218811774248729
 };
 
 main();
