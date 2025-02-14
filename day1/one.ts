@@ -1,4 +1,4 @@
-import { readInputByLines } from '../../utils/index.ts';
+import { readInputByLines } from '../utils/index.ts';
 
 type Lists = [number[], number[]];
 
