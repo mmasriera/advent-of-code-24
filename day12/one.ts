@@ -1,22 +1,11 @@
-import { readInputByLines } from '../utils/index.ts';
+
+import { readInputByLines, DIRECTIONS, type Position } from '../utils/index.ts';
 
 /*
 	BFS + visited
 */
 
-type Position = {
-	x: number;
-	y: number;
-};
-
 const VISITED: Record<string, Position[]> = {};
-
-const DIRECTIONS: Position[] = [
-	{ x: 0, y: 1 }, // up
-	{ x: 1, y: 0 }, // right
-	{ x: 0, y: -1 }, // down
-	{ x: -1, y: 0 }, // left
-];
 
 const isVisited = (char: string, position: Position): boolean => {
 	return !!VISITED[char]?.find((p) => p.x === position.x && p.y === position.y);
@@ -53,7 +42,7 @@ const getRegions = (map: string[]): string[] => {
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/test2.txt');
+	const input = readInputByLines('./inputs/test.txt');
 
 	const regions = getRegions(input);
 
@@ -61,4 +50,3 @@ const main = (): void => {
 };
 
 main();
- 
