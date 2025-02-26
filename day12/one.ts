@@ -44,7 +44,7 @@ const getRegions = (map: string[]): string[] => {
 const main = (): void => {
 	const input = readInputByLines('./inputs/test.txt');
 
-	const regions = getRegions(input);
+	// const regions = getRegions(input);
 
 	console.log('result day 12, part 1:', VISITED);
 };
