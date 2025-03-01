@@ -24,13 +24,20 @@ const calculateRegionCost = (map: string[][], id: string, { x, y }: Position): [
 
 		for (const increment of DIRECTIONS) {
 			const next = { x: x + increment.x, y: y + increment.y };
-			const [newArea, newPerimeter] = calculateRegionCost(map, id, next);
 
-			area += newArea;
-			
-			if (map[next.x]?.[next.x] !== id) {
-				perimeter += newPerimeter + 1;
+			console.log('-->', next, map[next.x]?.[next.y] === id);
+
+			if (map[next.x]?.[next.y] === id) {
+				const [newArea, newPerimeter] = calculateRegionCost(map, id, next);
+
+				area += newArea;
+				perimeter += newPerimeter;
+			} else {
+				perimeter += 1;
 			}
+
+
+			console.log('----> return', area, perimeter, 'for:', next);
 		}
 	}
 
@@ -44,7 +51,7 @@ const calculateTotalCost = (map: string[][]): number => {
 		for (let column = 0; column < map[row].length; column += 1) {
 			const id = map[row][column];
 
-			console.log('map iteration', { id, row, column }, map);
+			console.log('map iteration', { id, row, column });
 
 			if (id === VISITED_MARK) {
 				continue;
