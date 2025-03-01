@@ -5,48 +5,64 @@ import { readInputByLines, DIRECTIONS, type Position } from '../utils/index.ts';
 	BFS + visited
 */
 
-const VISITED: Record<string, Position[]> = {};
+const VISITED_MARK = '.'; 
 
-const isVisited = (char: string, position: Position): boolean => {
-	return !!VISITED[char]?.find((p) => p.x === position.x && p.y === position.y);
+const calculateRegionCost = (map: string[][], id: string, { x, y }: Position): [number, number] => {
+	console.log('calculate', id, { x, y });
+
+	// if same region, iterate
+	if (!!id && map[x]?.[y] === id) {
+		map[x][y] = VISITED_MARK;
+
+		let area = 0;
+		let perimeter = 0;
+
+		for (const increment of DIRECTIONS) {
+			const next = { x: x + increment.x, y: y + increment.y };
+			const [newArea, newPerimeter] = calculateRegionCost(map, id, next);
+
+			area += newArea;
+			perimeter += newPerimeter;
+		}
+		
+		return [area, perimeter];
+	}
+
+	// region edge, increase perimeter
+	return [0, 1];
 };
 
-const visitRegion = (map: string[], char: string, { x, y }: Position): void => {
-	VISITED[char].push({ x, y });
-
-	for (const direction of DIRECTIONS) {
-		const newPosition = { x: x + direction.x, y: y + direction.y };
-
-		if ((map[newPosition.x]?.[newPosition.y] === char) && !isVisited(char, newPosition)) {
-			visitRegion(map, char, newPosition);
-		}
-	}
-}
-
-const getRegions = (map: string[]): string[] => {
-	const regions: string[] = [];
+const calculateTotalCost = (map: string[][]): number => {
+	let result = 0;
 
 	for (let row = 0; row < map.length; row += 1) {
 		for (let column = 0; column < map[row].length; column += 1) {
-			const char = map[row][column];
+			const id = map[row][column];
 
-			if (!isVisited(char, { x: row, y: column })) {
-				VISITED[char] = VISITED[char] ?? [];
+			console.log('map iteration', { id, row, column }, map);
 
-				visitRegion(map, char, { x: row, y: column });
+			if (id === VISITED_MARK) {
+				continue;
 			}
+
+			// new region
+			const [area, perimeter] = calculateRegionCost(map, id, { x: row, y: column });
+
+			result += (area * perimeter);
+
+			console.log({ area, perimeter, result, id });
 		}
 	}
 
-	return regions;
+	return result;
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/test.txt');
+	const input = readInputByLines('./inputs/test.txt').map(s => s.split(''));
 
-	// const regions = getRegions(input);
+	const totalCost = calculateTotalCost(input);
 
-	console.log('result day 12, part 1:', VISITED);
+	console.log('result day 12, part 1:', totalCost);
 };
 
 main();
