@@ -9,27 +9,32 @@ const VISITED_MARK = '.';
 
 const calculateRegionCost = (map: string[][], id: string, { x, y }: Position): [number, number] => {
 	console.log('calculate', id, { x, y });
+	
+	let area = 0;
+	let perimeter = 0;
 
 	// if same region, iterate
 	if (!!id && map[x]?.[y] === id) {
-		map[x][y] = VISITED_MARK;
 
-		let area = 0;
-		let perimeter = 0;
+		console.log('HIT');
+
+		area += 1;
+
+		map[x][y] = VISITED_MARK;
 
 		for (const increment of DIRECTIONS) {
 			const next = { x: x + increment.x, y: y + increment.y };
 			const [newArea, newPerimeter] = calculateRegionCost(map, id, next);
 
 			area += newArea;
-			perimeter += newPerimeter;
+			
+			if (map[next.x]?.[next.x] !== id) {
+				perimeter += newPerimeter + 1;
+			}
 		}
-		
-		return [area, perimeter];
 	}
 
-	// region edge, increase perimeter
-	return [0, 1];
+	return [area, perimeter];
 };
 
 const calculateTotalCost = (map: string[][]): number => {
