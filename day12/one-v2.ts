@@ -6,6 +6,33 @@ import { readInputByLines, DIRECTIONS, type Position } from '../utils/index.ts';
 
 const VISITED = new Set<string>();
 
+const calculateRegionCost = (map: string[][], char: string, position: Position): number => {
+	const candidates: Position[] = [position]; // candidates for the region (the 1st one will always be)
+	const region = new Set<string>();
+	let perimeter = 0;
+	
+	region.add(`${position.x},${position.y}`);
+
+	while (candidates.length > 0) {
+		const candidate = candidates.shift(); // get the 1st one
+
+		for (const increment of DIRECTIONS) {
+			const next = { x: candidate.x + increment.x, y: candidate?.y + increment.y };
+			const nextCoordinate = `${next.x},${next.y}`;
+
+			if (map[next.x]?.[next.y] === char && !region.has(nextCoordinate)) {
+				region.add(nextCoordinate);
+				VISITED.add(nextCoordinate);
+				candidates.push(next);
+			} else if (!region.has(nextCoordinate)) {
+				perimeter += 1;
+			}
+		}
+	}
+
+	return region.size * perimeter
+}
+
 const calculateTotalCost = (map: string[][]): number => {
 	let result = 0;
 
@@ -20,30 +47,7 @@ const calculateTotalCost = (map: string[][]): number => {
 
 			VISITED.add(coordinate);
 
-			const region = new Set<string>();
-			const candidates: Position[] = [{ x: row, y: column }]; // candidates for the region (the 1st one will always be)
-			region.add(coordinate);
-
-			let perimeter = 0;
-
-			while (candidates.length > 0) {
-				const candidate = candidates.shift(); // ???
-
-				for (const increment of DIRECTIONS) {
-					const next = { x: candidate.x + increment.x, y: candidate?.y + increment.y };
-					const nextCoordinate = `${next.x},${next.y}`;
-
-					if (map[next.x]?.[next.y] === char && !region.has(nextCoordinate)) {
-						region.add(nextCoordinate);
-						candidates.push(next);
-					} else if (!region.has(nextCoordinate)) {
-						perimeter += 1;
-					}
-				}
-			}
-
-			region.forEach(item => VISITED.add(item))
-			result += region.size * perimeter
+			result += calculateRegionCost(map, char, { x: row, y: column });
 		}
 	}
 
@@ -51,7 +55,7 @@ const calculateTotalCost = (map: string[][]): number => {
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/main.txt').map((s) => s.split(''));
+	const input = readInputByLines('./inputs/test.txt').map((s) => s.split(''));
 	const totalCost = calculateTotalCost(input);
 
 	console.log('result day 12, part 1:', totalCost);

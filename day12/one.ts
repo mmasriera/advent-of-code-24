@@ -1,7 +1,7 @@
 import { readInputByLines, DIRECTIONS, type Position } from '../utils/index.ts';
 
 /*
-	BFS + visited
+	BFS + visited + mark map
 */
 
 const VISITED_MARK = '.';
