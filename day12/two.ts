@@ -6,7 +6,7 @@ import { readInputByLines, DIRECTIONS, type Position } from '../utils/index.ts';
 
 const VISITED = new Set<string>();
 
-type Side = {
+type Edge = {
 	position: Position,
 	direction: string // will be the index of the direction
 }
@@ -16,7 +16,7 @@ const posToId = (position: Position): string => `${position.x},${position.y}`;
 const calculateRegionCost = (map: string[][], char: string, position: Position): number => {
 	const candidates: Position[] = [position]; // candidates for the region (the 1st one will always be)
 	const region = new Set<string>();
-	const sides: Side[] = [];
+	const edges: Edge[] = [];
 
 	region.add(posToId(position));
 
@@ -37,7 +37,7 @@ const calculateRegionCost = (map: string[][], char: string, position: Position):
 				VISITED.add(nextCoordinate);
 				candidates.push(next);
 			} else if (!region.has(nextCoordinate)) {
-				sides.push({
+				edges.push({
 					// biome-ignore lint/style/noNonNullAssertion: the while condition prevents candidate from being undefined
 					position: candidate!,
 					direction: posToId(increment)
@@ -46,7 +46,15 @@ const calculateRegionCost = (map: string[][], char: string, position: Position):
 		}
 	}
 
-	console.log('region', { region, sides });
+	console.log('region', { region });
+
+	// to do: calculate the actual sides
+	/*
+		foreach direction -> findall --> sort by x/y --> check them all and +1 for every non continous
+
+		alt: for each one -> find contigous --> remove themf from the edges list
+	*/
+
 
 	return region.size;
 };
