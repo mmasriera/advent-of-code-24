@@ -10,7 +10,7 @@ const calculateRegionCost = (map: string[][], char: string, position: Position):
 	const candidates: Position[] = [position]; // candidates for the region (the 1st one will always be)
 	const region = new Set<string>();
 	let perimeter = 0;
-	
+
 	region.add(`${position.x},${position.y}`);
 
 	while (candidates.length > 0) {
@@ -30,8 +30,8 @@ const calculateRegionCost = (map: string[][], char: string, position: Position):
 		}
 	}
 
-	return region.size * perimeter
-}
+	return region.size * perimeter;
+};
 
 const calculateTotalCost = (map: string[][]): number => {
 	let result = 0;
@@ -55,10 +55,10 @@ const calculateTotalCost = (map: string[][]): number => {
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/test.txt').map((s) => s.split(''));
+	const input = readInputByLines('./inputs/main.txt').map((s) => s.split(''));
 	const totalCost = calculateTotalCost(input);
 
-	console.log('result day 12, part 1:', totalCost);
+	console.log('result day 12, part 1:', totalCost); // 1456082
 };
 
 main();
