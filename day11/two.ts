@@ -49,7 +49,7 @@ const main = (): void => {
 
 		result += count;
 	}
-	
+
 	console.log('result day 11, part 2:', result); // 218811774248729
 };
 
