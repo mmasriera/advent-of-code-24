@@ -6,42 +6,33 @@ import { readInputByLines, DIRECTIONS, type Position } from '../utils/index.ts';
 */
 
 const VISITED_MARK = '.'; 
+const REGIONS: Record<string, string[]> = {};
 
 const calculateRegionCost = (map: string[][], id: string, { x, y }: Position): [number, number] => {
-	console.log('calculate', id, { x, y });
-	
 	let area = 0;
 	let perimeter = 0;
 
 	// if same region, iterate
 	if (!!id && map[x]?.[y] === id) {
 
-		console.log('HIT');
-
 		area += 1;
-
 		map[x][y] = VISITED_MARK;
+		REGIONS[id].push(`${ x },${ y }`)
 
 		for (const increment of DIRECTIONS) {
 			const next = { x: x + increment.x, y: y + increment.y };
 
-			console.log('-->', next, map[next.x]?.[next.y] === id);
-
 			if (map[next.x]?.[next.y] === id) {
-				const [newArea, newPerimeter] = calculateRegionCost(map, id, next);
+				const [_, newPerimeter] = calculateRegionCost(map, id, next);
 
-				area += newArea;
 				perimeter += newPerimeter;
-			} else {
+			} else if (!REGIONS[id].includes(`${ next.x },${ next.y }`)) {
 				perimeter += 1;
 			}
-
-
-			console.log('----> return', area, perimeter, 'for:', next);
 		}
 	}
 
-	return [area, perimeter];
+	return [REGIONS[id].length, perimeter];
 };
 
 const calculateTotalCost = (map: string[][]): number => {
@@ -51,18 +42,15 @@ const calculateTotalCost = (map: string[][]): number => {
 		for (let column = 0; column < map[row].length; column += 1) {
 			const id = map[row][column];
 
-			console.log('map iteration', { id, row, column });
-
-			if (id === VISITED_MARK) {
+			if (id === VISITED_MARK) { // visited cells will be marked with "."
 				continue;
 			}
 
-			// new region
+			REGIONS[id] = []; // reset this region (they can be repeated)
+
 			const [area, perimeter] = calculateRegionCost(map, id, { x: row, y: column });
 
 			result += (area * perimeter);
-
-			console.log({ area, perimeter, result, id });
 		}
 	}
 
@@ -70,8 +58,7 @@ const calculateTotalCost = (map: string[][]): number => {
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/test.txt').map(s => s.split(''));
-
+	const input = readInputByLines('./inputs/test2.txt').map(s => s.split(''));
 	const totalCost = calculateTotalCost(input);
 
 	console.log('result day 12, part 1:', totalCost);
