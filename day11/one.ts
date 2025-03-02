@@ -27,7 +27,7 @@ const main = (): void => {
 	for (let i = 1; i <= BLINKS; i += 1) {
 		stones = updateStones(stones);
 	}
-	
+
 	console.log('result day 11, part 1:', stones.length); // 183248
 };
 
