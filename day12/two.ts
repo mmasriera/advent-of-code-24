@@ -6,12 +6,19 @@ import { readInputByLines, DIRECTIONS, type Position } from '../utils/index.ts';
 
 const VISITED = new Set<string>();
 
+type Side = {
+	position: Position,
+	direction: string // will be the index of the direction
+}
+
+const posToId = (position: Position): string => `${position.x},${position.y}`;
+
 const calculateRegionCost = (map: string[][], char: string, position: Position): number => {
 	const candidates: Position[] = [position]; // candidates for the region (the 1st one will always be)
 	const region = new Set<string>();
-	let perimeter = 0;
+	const sides: Side[] = [];
 
-	region.add(`${position.x},${position.y}`);
+	region.add(posToId(position));
 
 	while (candidates.length > 0) {
 		const candidate = candidates.shift(); // get the 1st one
@@ -19,19 +26,29 @@ const calculateRegionCost = (map: string[][], char: string, position: Position):
 		for (const increment of DIRECTIONS) {
 			// biome-ignore lint/style/noNonNullAssertion: the while condition prevents candidate from being undefined
 			const next = { x: candidate!.x + increment.x, y: candidate!.y + increment.y };
-			const nextCoordinate = `${next.x},${next.y}`;
+			const nextCoordinate = posToId(next);
 
-			if (map[next.x]?.[next.y] === char && !region.has(nextCoordinate)) {
+			if (region.has(nextCoordinate)) {
+				continue;
+			}
+
+			if (map[next.x]?.[next.y] === char) {
 				region.add(nextCoordinate);
 				VISITED.add(nextCoordinate);
 				candidates.push(next);
 			} else if (!region.has(nextCoordinate)) {
-				perimeter += 1;
+				sides.push({
+					// biome-ignore lint/style/noNonNullAssertion: the while condition prevents candidate from being undefined
+					position: candidate!,
+					direction: posToId(increment)
+				});
 			}
 		}
 	}
 
-	return region.size * perimeter;
+	console.log('region', { region, sides });
+
+	return region.size;
 };
 
 const calculateTotalCost = (map: string[][]): number => {
