@@ -56,7 +56,7 @@ const calculateTotalCost = (map: string[][]): number => {
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/main.txt').map((s) => s.split(''));
+	const input = readInputByLines('./inputs/test.txt').map((s) => s.split(''));
 	const totalCost = calculateTotalCost(input);
 
 	console.log('result day 12, part 1:', totalCost); // 1456082
