@@ -53,6 +53,8 @@ const calculateRegionCost = (map: string[][], char: string, position: Position):
 		foreach direction -> findall --> sort by x/y --> check them all and +1 for every non continous
 
 		alt: for each one -> find contigous --> remove themf from the edges list
+
+		altBetter: when saving edges --> instead of direction, save range, update range / add new
 	*/
 
 
