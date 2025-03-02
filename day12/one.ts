@@ -1,37 +1,36 @@
 import { readInputByLines, DIRECTIONS, type Position } from '../utils/index.ts';
 
 /*
-	BFS + visited + mark map
+	BFS + visited
 */
 
-const VISITED_MARK = '.';
-const REGIONS: Record<string, string[]> = {};
+const VISITED = new Set<string>();
 
-const calculateRegionCost = (map: string[][], id: string, { x, y }: Position): [number, number] => {
-	let area = 0;
+const calculateRegionCost = (map: string[][], char: string, position: Position): number => {
+	const candidates: Position[] = [position]; // candidates for the region (the 1st one will always be)
+	const region = new Set<string>();
 	let perimeter = 0;
 
-	if (!!id && map[x]?.[y] === id) {
-		// in "id" region
-		area += 1;
-		map[x][y] = VISITED_MARK;
-		REGIONS[id].push(`${x},${y}`);
+	region.add(`${position.x},${position.y}`);
+
+	while (candidates.length > 0) {
+		const candidate = candidates.shift(); // get the 1st one
 
 		for (const increment of DIRECTIONS) {
-			const next = { x: x + increment.x, y: y + increment.y };
+			const next = { x: candidate.x + increment.x, y: candidate?.y + increment.y };
+			const nextCoordinate = `${next.x},${next.y}`;
 
-			if (map[next.x]?.[next.y] === id) {
-				const [newArea, newPerimeter] = calculateRegionCost(map, id, next);
-
-				area += newArea;
-				perimeter += newPerimeter;
-			} else if (!REGIONS[id].includes(`${next.x},${next.y}`)) {
+			if (map[next.x]?.[next.y] === char && !region.has(nextCoordinate)) {
+				region.add(nextCoordinate);
+				VISITED.add(nextCoordinate);
+				candidates.push(next);
+			} else if (!region.has(nextCoordinate)) {
 				perimeter += 1;
 			}
 		}
 	}
 
-	return [area, perimeter];
+	return region.size * perimeter;
 };
 
 const calculateTotalCost = (map: string[][]): number => {
@@ -39,18 +38,16 @@ const calculateTotalCost = (map: string[][]): number => {
 
 	for (let row = 0; row < map.length; row += 1) {
 		for (let column = 0; column < map[row].length; column += 1) {
-			const id = map[row][column];
+			const coordinate = `${row},${column}`;
+			const char = map[row][column];
 
-			if (id === VISITED_MARK) {
-				// visited cells will be marked with "."
+			if (VISITED.has(coordinate)) {
 				continue;
 			}
 
-			REGIONS[id] = []; // reset this region (they can be repeated)
+			VISITED.add(coordinate);
 
-			const [area, perimeter] = calculateRegionCost(map, id, { x: row, y: column });
-
-			result += area * perimeter;
+			result += calculateRegionCost(map, char, { x: row, y: column });
 		}
 	}
 
@@ -58,10 +55,10 @@ const calculateTotalCost = (map: string[][]): number => {
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/test2.txt').map((s) => s.split(''));
+	const input = readInputByLines('./inputs/main.txt').map((s) => s.split(''));
 	const totalCost = calculateTotalCost(input);
 
-	console.log('result day 12, part 1:', totalCost);
+	console.log('result day 12, part 1:', totalCost); // 1456082
 };
 
 main();
