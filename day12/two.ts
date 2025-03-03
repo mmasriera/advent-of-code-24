@@ -69,8 +69,8 @@ const calculateRegionCost = (map: string[][], char: string, position: MapPositio
 					direction: getCoordinate(increment)
 				}
 
-				if (hasContigous(edge, edges)) {
-					sides += sides;
+				if (!hasContigous(edge, edges)) {
+					sides += 1;
 				}
 
 				edges.push(edge);
@@ -78,17 +78,7 @@ const calculateRegionCost = (map: string[][], char: string, position: MapPositio
 		}
 	}
 
-	console.log('region', { region, edges,sides });
-
-	// to do: calculate the actual sides
-	/*
-		foreach direction -> findall --> sort by x/y --> check them all and +1 for every non continous
-
-		alt: for each one -> find contigous --> remove them from the edges list
-
-		altBetter: when saving edges --> instead of direction, save range, update range / add new
-	*/
-	return region.size;
+	return region.size * sides;
 };
 
 const calculateTotalCost = (map: string[][]): number => {
@@ -106,9 +96,6 @@ const calculateTotalCost = (map: string[][]): number => {
 			VISITED.add(coordinate);
 
 			result += calculateRegionCost(map, char, { row, col });
-
-			// TMP
-			if (char === 'A') { return 0; }
 		}
 	}
 
@@ -116,10 +103,10 @@ const calculateTotalCost = (map: string[][]): number => {
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/test.txt').map((s) => s.split(''));
+	const input = readInputByLines('./inputs/main.txt').map((s) => s.split(''));
 	const totalCost = calculateTotalCost(input);
 
-	console.log('result day 12, part 2:', totalCost); // 1456082
+	console.log('result day 12, part 2:', totalCost); // 872483
 };
 
 main();
