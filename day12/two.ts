@@ -1,4 +1,6 @@
-import { readInputByLines, MAP_DIRECTIONS, type MapPosition, getCoordinate } from '../utils/index.ts';
+import {
+	readInputByLines, MAP_DIRECTIONS, type MapPosition, getCoordinate, sumPositions, isEqPosition
+} from '../utils/index.ts';
 
 /*
 	BFS + visited
@@ -8,7 +10,31 @@ const VISITED = new Set<string>();
 
 type Edge = {
 	position: MapPosition,
-	direction: string // will be the index of the direction
+	direction: string
+}
+
+const getContigousIncrement = (direction: string): MapPosition[] => {
+	const [row] = direction.split(',');
+
+	if (row === '0') {
+		return [{ row: -1, col: 0 }, { row: 1, col: 0 }];
+	}
+
+	return [{ row: 0, col: -1 }, { row: 0, col: 1 }];
+}
+
+const hasContigous = (edge: Edge, visitedEdges: Edge[]): boolean => {
+	return !!visitedEdges.find(e => {
+		if (edge.direction === e.direction) {
+			for (const increment of getContigousIncrement(edge.direction)) {
+				if (isEqPosition(sumPositions(e.position, increment), edge.position)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	});
 }
 
 const calculateRegionCost = (map: string[][], char: string, position: MapPosition): number => {
@@ -18,12 +44,14 @@ const calculateRegionCost = (map: string[][], char: string, position: MapPositio
 
 	region.add(getCoordinate(position));
 
+	let sides = 0;
+
 	while (candidates.length > 0) {
 		const candidate = candidates.shift(); // get the 1st one
 
 		for (const increment of MAP_DIRECTIONS) {
 			// biome-ignore lint/style/noNonNullAssertion: the while condition prevents candidate from being undefined
-			const next = { row: candidate!.row + increment.row, col: candidate!.col + increment.col };
+			const next = sumPositions(candidate!, increment);
 			const nextCoordinate = getCoordinate(next);
 
 			if (region.has(nextCoordinate)) {
@@ -35,28 +63,22 @@ const calculateRegionCost = (map: string[][], char: string, position: MapPositio
 				VISITED.add(nextCoordinate);
 				candidates.push(next);
 			} else if (!region.has(nextCoordinate)) {
-				edges.push({
+				const edge = {
 					// biome-ignore lint/style/noNonNullAssertion: the while condition prevents candidate from being undefined
 					position: candidate!,
 					direction: getCoordinate(increment)
-				});
+				}
+
+				if (!hasContigous(edge, edges)) {
+					sides += 1;
+				}
+
+				edges.push(edge);
 			}
 		}
 	}
 
-	console.log('region', { region, edges });
-
-	// to do: calculate the actual sides
-	/*
-		foreach direction -> findall --> sort by x/y --> check them all and +1 for every non continous
-
-		alt: for each one -> find contigous --> remove them from the edges list
-
-		altBetter: when saving edges --> instead of direction, save range, update range / add new
-	*/
-
-
-	return region.size;
+	return region.size * sides;
 };
 
 const calculateTotalCost = (map: string[][]): number => {
@@ -81,10 +103,10 @@ const calculateTotalCost = (map: string[][]): number => {
 };
 
 const main = (): void => {
-	const input = readInputByLines('./inputs/test.txt').map((s) => s.split(''));
+	const input = readInputByLines('./inputs/main.txt').map((s) => s.split(''));
 	const totalCost = calculateTotalCost(input);
 
-	console.log('result day 12, part 1:', totalCost); // 1456082
+	console.log('result day 12, part 2:', totalCost); // 872483
 };
 
 main();

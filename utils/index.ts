@@ -26,6 +26,16 @@ export const MAP_DIRECTIONS: MapPosition[] = [
 
 export const getCoordinate = (position: MapPosition): string => `${position.row},${position.col}`;
 
+export const sumPositions = (positionA: MapPosition, PositionB: MapPosition): MapPosition => ({
+	row: positionA.row + PositionB.row,
+	col: positionA.col + PositionB.col,
+});
+
+export const isEqPosition = (positionA: MapPosition, PositionB: MapPosition): boolean => {
+	return positionA.row === PositionB.row && positionA.col === PositionB.col;
+}
+
+// I/O
 export const readInputFile = (path: string): string => {
 	return Deno.readTextFileSync(path);
 };
