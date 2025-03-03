@@ -1,6 +1,7 @@
+
 export type Position = {
-	x: number;
-	y: number;
+	x: number,
+	y: number
 };
 
 export const DIRECTIONS: Position[] = [
@@ -9,6 +10,21 @@ export const DIRECTIONS: Position[] = [
 	{ x: 0, y: -1 }, // down
 	{ x: -1, y: 0 }, // left
 ];
+
+export type MapPosition = {
+	row: number,
+	col: number
+};
+
+// positions for input maps
+export const MAP_DIRECTIONS: MapPosition[] = [
+	{ row: -1, col: 0 }, // up
+	{ row: 0, col: 1 }, // right
+	{ row: 1, col: 0 }, // down
+	{ row: 0, col: -1 }, // left
+];
+
+export const getCoordinate = (position: MapPosition): string => `${position.row},${position.col}`;
 
 export const readInputFile = (path: string): string => {
 	return Deno.readTextFileSync(path);
