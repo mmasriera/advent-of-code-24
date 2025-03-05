@@ -1,7 +1,6 @@
-
 export type Position = {
-	x: number,
-	y: number
+	x: number;
+	y: number;
 };
 
 export const DIRECTIONS: Position[] = [
@@ -12,8 +11,8 @@ export const DIRECTIONS: Position[] = [
 ];
 
 export type MapPosition = {
-	row: number,
-	col: number
+	row: number;
+	col: number;
 };
 
 // positions for input maps
@@ -33,7 +32,7 @@ export const sumPositions = (positionA: MapPosition, PositionB: MapPosition): Ma
 
 export const isEqPosition = (positionA: MapPosition, PositionB: MapPosition): boolean => {
 	return positionA.row === PositionB.row && positionA.col === PositionB.col;
-}
+};
 
 // I/O
 export const readInputFile = (path: string): string => {
