@@ -8,74 +8,50 @@ type Machine = {
 
 const NUMBERS = /\d+/g;
 
-const getClosestUpper = (target: number, candidate: number): number => {
-	const times = target / candidate;
-
-	if (times >= 1 && times < 100 ) {
-		return Math.ceil(times);
-	}
-
-	return -1;
-}
+const calculateCost = (a: number, b: number) => a * 3 + b;
+// biome-ignore lint/style/noNonNullAssertion: it will always exist
+const getLineNumbers = (line: string) => line.match(NUMBERS)!.map(Number);
 
 const minTokensToWin = ({ A, B, prize }: Machine): number => {
-	let tokens = 0;
+	let b = 100;
+	let solution = Number.MAX_VALUE;
 
-	console.log('machine', A, B, prize);
+	while (b >= 0) {
+		let a = 0;
 
-	const startBx = getClosestUpper(prize.x, B.x);
+		let result = (B.x * b) + (A.x * a);
 
-	if (startBx > 0) {
-		// start
-		console.log('start b x', startBx);
-		
-		return tokens;
+		if ((result === prize.x) && (B.y * b + A.y * a === prize.y)) {
+			solution = Math.min(solution, calculateCost(a, b));
+		} else {
+			while (a < 100) {
+				a++;
+				result = (B.x * b) + (A.x * a);
+
+				if (result > prize.x) {
+					break;
+				}
+
+				if ((result === prize.x) && (B.y * b + A.y * a === prize.y)) {
+					solution = Math.min(solution, calculateCost(a, b));
+				}
+			}
+		}
+		b--;
 	}
 
-	const startBy = getClosestUpper(prize.y, B.y);
+	console.log('solution', solution);
 
-	if (startBy > 0) {
-		// start
-		console.log('start b y', startBy);
-		
-		// for (let i = 0; i <= startBy; i += 1) {
-		// 	const result = (B.y * (startBy - i)) + (A.y * i);
-
-		// 	console.log({ i, result });
-		// }
-
-		return tokens;
-	}
-
-	const startAx = getClosestUpper(prize.x, A.x);
-
-	if (startAx > 0) {
-		// start
-		console.log('start a x', startAx);
-		return tokens;
-	}
-
-	const startAy = getClosestUpper(prize.y, A.y);
-
-	if (startAy > 0) {
-		// start
-		console.log('start a y', startAy);
-		return tokens;
-	}
-
-	return tokens;
+	return solution === Number.MAX_VALUE ? 0 : solution;
 }
 
 const parseInput = (lines: string[]): Machine[] => {
 	const result: Machine[] = [];
 
 	for (let i = 0; i <= lines.length; i += 4) {
-		// biome-ignore lint/style/noNonNullAssertion: it will always exist
-		const a = lines[i].match(NUMBERS)!.map(Number);
-		// biome-ignore lint/style/noNonNullAssertion: it will always exist
-		const b = lines[i + 1].match(NUMBERS)!.map(Number);
-		// biome-ignore lint/style/noNonNullAssertion: it will always exist
-		const prize = lines[i + 2].match(NUMBERS)!.map(Number);
+		const a = getLineNumbers(lines[i]);
+		const b = getLineNumbers(lines[i + 1]);
+		const prize = getLineNumbers(lines[i + 2]);
 
 		result.push({
 			A: { x: a[0], y: a[1] },
@@ -91,7 +67,7 @@ const main = (): void => {
 	const machines = parseInput(readInputByLines('./inputs/test.txt'));
 	const result = machines.reduce((acc, machine) => acc + minTokensToWin(machine), 0)
 
-	console.log('result day 13, part 1:', result); //
+	console.log('result day 13, part 1:', result); // 480
 };
 
 main();
