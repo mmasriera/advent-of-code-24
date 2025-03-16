@@ -19,8 +19,8 @@ const calculateCost = (a: number, b: number): number => a * 3 + b;
 const getLineNumbers = (line: string): number[] => line.match(NUMBERS)!.map(Number);
 
 const minTokensToWin = ({ A, B, prize }: Machine): number => {
-	const timesB = ((prize.x * A.y) - (prize.y * A.x)) / ((B.x * A.y) - (B.y * A.x));
-	const timesA = (prize.y - (timesB * B.y)) / A.y;
+	const timesB = (prize.x * A.y - prize.y * A.x) / (B.x * A.y - B.y * A.x);
+	const timesA = (prize.y - timesB * B.y) / A.y;
 
 	if (!Number.isInteger(timesA) || !Number.isInteger(timesB)) {
 		// not a valid solution
@@ -41,7 +41,7 @@ const parseInput = (lines: string[]): Machine[] => {
 		result.push({
 			A: { x: a[0], y: a[1] },
 			B: { x: b[0], y: b[1] },
-			prize: { x: INCREMENT + prize[0], y: INCREMENT + prize[1] }
+			prize: { x: INCREMENT + prize[0], y: INCREMENT + prize[1] },
 		});
 	}
 
