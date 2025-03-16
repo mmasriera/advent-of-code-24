@@ -63,7 +63,7 @@ const main = (): void => {
 	const robots = parseInput(readInputByLines('./inputs/main.txt'));
 	const safetyFactor = calculateSafetyFactor(robots);
 
-	console.log('result day 14, part 1:', safetyFactor); // 90810720 (too low)
+	console.log('result day 14, part 1:', safetyFactor); // 233709840
 };
 
 main();
