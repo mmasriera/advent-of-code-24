@@ -1,5 +1,10 @@
 import {
-	readInputByLines, MAP_DIRECTIONS, type MapPosition, getCoordinate, sumPositions, isEqPosition
+	readInputByLines,
+	MAP_DIRECTIONS,
+	type MapPosition,
+	getCoordinate,
+	sumPositions,
+	isEqPosition,
 } from '../utils/index.ts';
 
 /*
@@ -9,22 +14,28 @@ import {
 const VISITED = new Set<string>();
 
 type Edge = {
-	position: MapPosition,
-	direction: string
-}
+	position: MapPosition;
+	direction: string;
+};
 
 const getContigousIncrement = (direction: string): MapPosition[] => {
 	const [row] = direction.split(',');
 
 	if (row === '0') {
-		return [{ row: -1, col: 0 }, { row: 1, col: 0 }];
+		return [
+			{ row: -1, col: 0 },
+			{ row: 1, col: 0 },
+		];
 	}
 
-	return [{ row: 0, col: -1 }, { row: 0, col: 1 }];
-}
+	return [
+		{ row: 0, col: -1 },
+		{ row: 0, col: 1 },
+	];
+};
 
 const hasContigous = (edge: Edge, visitedEdges: Edge[]): boolean => {
-	return !!visitedEdges.find(e => {
+	return !!visitedEdges.find((e) => {
 		if (edge.direction === e.direction) {
 			for (const increment of getContigousIncrement(edge.direction)) {
 				if (isEqPosition(sumPositions(e.position, increment), edge.position)) {
@@ -35,7 +46,7 @@ const hasContigous = (edge: Edge, visitedEdges: Edge[]): boolean => {
 
 		return false;
 	});
-}
+};
 
 const calculateRegionCost = (map: string[][], char: string, position: MapPosition): number => {
 	const candidates: MapPosition[] = [position]; // candidates for the region (the 1st one will always be)
@@ -66,8 +77,8 @@ const calculateRegionCost = (map: string[][], char: string, position: MapPositio
 				const edge = {
 					// biome-ignore lint/style/noNonNullAssertion: the while condition prevents candidate from being undefined
 					position: candidate!,
-					direction: getCoordinate(increment)
-				}
+					direction: getCoordinate(increment),
+				};
 
 				if (!hasContigous(edge, edges)) {
 					sides += 1;
