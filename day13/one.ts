@@ -1,5 +1,8 @@
 import { readInputByLines, type Position } from '../utils/index.ts';
 
+/* maybe it's better to solve the equations (?) */
+/* maybe a greedier approach (?) */
+
 type Machine = {
 	A: Position;
 	B: Position;
@@ -8,9 +11,9 @@ type Machine = {
 
 const NUMBERS = /\d+/g;
 
-const calculateCost = (a: number, b: number) => a * 3 + b;
+const calculateCost = (a: number, b: number): number => a * 3 + b;
 // biome-ignore lint/style/noNonNullAssertion: it will always exist
-const getLineNumbers = (line: string) => line.match(NUMBERS)!.map(Number);
+const getLineNumbers = (line: string): number[] => line.match(NUMBERS)!.map(Number);
 
 const minTokensToWin = ({ A, B, prize }: Machine): number => {
 	let b = 100;
@@ -25,7 +28,7 @@ const minTokensToWin = ({ A, B, prize }: Machine): number => {
 			solution = Math.min(solution, calculateCost(a, b));
 		} else {
 			while (a < 100) {
-				a++;
+				a += 1;
 				result = (B.x * b) + (A.x * a);
 
 				if (result > prize.x) {
@@ -37,10 +40,8 @@ const minTokensToWin = ({ A, B, prize }: Machine): number => {
 				}
 			}
 		}
-		b--;
+		b -= 1;
 	}
-
-	console.log('solution', solution);
 
 	return solution === Number.MAX_VALUE ? 0 : solution;
 }
@@ -64,10 +65,10 @@ const parseInput = (lines: string[]): Machine[] => {
 };
 
 const main = (): void => {
-	const machines = parseInput(readInputByLines('./inputs/test.txt'));
+	const machines = parseInput(readInputByLines('./inputs/main.txt'));
 	const result = machines.reduce((acc, machine) => acc + minTokensToWin(machine), 0)
 
-	console.log('result day 13, part 1:', result); // 480
+	console.log('result day 13, part 1:', result); // 36838
 };
 
 main();
