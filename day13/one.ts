@@ -22,20 +22,20 @@ const minTokensToWin = ({ A, B, prize }: Machine): number => {
 	while (b >= 0) {
 		let a = 0;
 
-		let result = (B.x * b) + (A.x * a);
+		let result = B.x * b + A.x * a;
 
-		if ((result === prize.x) && (B.y * b + A.y * a === prize.y)) {
+		if (result === prize.x && B.y * b + A.y * a === prize.y) {
 			solution = Math.min(solution, calculateCost(a, b));
 		} else {
 			while (a < 100) {
 				a += 1;
-				result = (B.x * b) + (A.x * a);
+				result = B.x * b + A.x * a;
 
 				if (result > prize.x) {
 					break;
 				}
 
-				if ((result === prize.x) && (B.y * b + A.y * a === prize.y)) {
+				if (result === prize.x && B.y * b + A.y * a === prize.y) {
 					solution = Math.min(solution, calculateCost(a, b));
 				}
 			}
@@ -44,7 +44,7 @@ const minTokensToWin = ({ A, B, prize }: Machine): number => {
 	}
 
 	return solution === Number.MAX_VALUE ? 0 : solution;
-}
+};
 
 const parseInput = (lines: string[]): Machine[] => {
 	const result: Machine[] = [];
@@ -66,7 +66,7 @@ const parseInput = (lines: string[]): Machine[] => {
 
 const main = (): void => {
 	const machines = parseInput(readInputByLines('./inputs/main.txt'));
-	const result = machines.reduce((acc, machine) => acc + minTokensToWin(machine), 0)
+	const result = machines.reduce((acc, machine) => acc + minTokensToWin(machine), 0);
 
 	console.log('result day 13, part 1:', result); // 36838
 };
