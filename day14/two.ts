@@ -45,14 +45,18 @@ const calculateSafetyFactor = (robots: Robot[], iteration: number): number => {
 	robots
 		.map((r) => futurePosition(r, iteration))
 		.forEach((r) => {
-			if (r.x < (MAP_WIDTH - 1) / 2 && r.y < (MAP_HEIGHT - 1) / 2) {
-				quadrants[0] += 1;
-			} else if (r.x > (MAP_WIDTH - 1) / 2 && r.y < (MAP_HEIGHT - 1) / 2) {
-				quadrants[1] += 1;
-			} else if (r.x < (MAP_WIDTH - 1) / 2 && r.y > (MAP_HEIGHT - 1) / 2) {
-				quadrants[2] += 1;
-			} else if (r.x > (MAP_WIDTH - 1) / 2 && r.y > (MAP_HEIGHT - 1) / 2) {
-				quadrants[3] += 1;
+			if (r.x < (MAP_WIDTH - 1) / 2) {
+				if (r.y < (MAP_HEIGHT - 1) / 2) {
+					quadrants[0] += 1;
+				} else {
+					quadrants[1] += 1;
+				}
+			} else {
+				if (r.y < (MAP_HEIGHT - 1) / 2) {
+					quadrants[2] += 1;
+				} else {
+					quadrants[3] += 1;
+				}
 			}
 		});
 
