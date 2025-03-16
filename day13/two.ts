@@ -1,7 +1,9 @@
 import { readInputByLines, type Position } from '../utils/index.ts';
 
-/* maybe it's better to solve the equations (?) */
-/* maybe a greedier approach (?) */
+/*
+	assumning that the vectors of the button movements are not parellel between them,
+	we can solve the equation (there are just 1 solution, it makes no sense to try all the possible values)
+*/
 
 type Machine = {
 	A: Position;
@@ -10,39 +12,22 @@ type Machine = {
 };
 
 const NUMBERS = /\d+/g;
+const INCREMENT = 10000000000000;
 
 const calculateCost = (a: number, b: number): number => a * 3 + b;
 // biome-ignore lint/style/noNonNullAssertion: it will always exist
 const getLineNumbers = (line: string): number[] => line.match(NUMBERS)!.map(Number);
 
 const minTokensToWin = ({ A, B, prize }: Machine): number => {
-	let b = 100;
-	let solution = Number.MAX_VALUE;
+	const timesB = ((prize.x * A.y) - (prize.y * A.x)) / ((B.x * A.y) - (B.y * A.x));
+	const timesA = (prize.y - (timesB * B.y)) / A.y;
 
-	while (b >= 0) {
-		let a = 0;
-		let result = B.x * b + A.x * a;
-
-		if (result === prize.x && B.y * b + A.y * a === prize.y) {
-			solution = Math.min(solution, calculateCost(a, b));
-		} else {
-			while (a < 100) {
-				a += 1;
-				result = B.x * b + A.x * a;
-
-				if (result > prize.x) {
-					break;
-				}
-
-				if (result === prize.x && B.y * b + A.y * a === prize.y) {
-					solution = Math.min(solution, calculateCost(a, b));
-				}
-			}
-		}
-		b -= 1;
+	if (!Number.isInteger(timesA) || !Number.isInteger(timesB)) {
+		// not a valid solution
+		return 0;
 	}
 
-	return solution === Number.MAX_VALUE ? 0 : solution;
+	return calculateCost(timesA, timesB);
 };
 
 const parseInput = (lines: string[]): Machine[] => {
@@ -56,7 +41,7 @@ const parseInput = (lines: string[]): Machine[] => {
 		result.push({
 			A: { x: a[0], y: a[1] },
 			B: { x: b[0], y: b[1] },
-			prize: { x: prize[0], y: prize[1] },
+			prize: { x: INCREMENT + prize[0], y: INCREMENT + prize[1] }
 		});
 	}
 
@@ -67,7 +52,7 @@ const main = (): void => {
 	const machines = parseInput(readInputByLines('./inputs/main.txt'));
 	const result = machines.reduce((acc, machine) => acc + minTokensToWin(machine), 0);
 
-	console.log('result day 13, part 1:', result); // 36838
+	console.log('result day 13, part 2:', result); // 83029436920891
 };
 
 main();
