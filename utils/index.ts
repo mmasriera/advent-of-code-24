@@ -23,6 +23,14 @@ export const MAP_DIRECTIONS: MapPosition[] = [
 	{ row: 0, col: -1 }, // left
 ];
 
+export const findInMap = (map: string[][], value: string): MapPosition | undefined => {
+	for (let row = 0; row < map.length; row++) {
+		for (let col = 0; col < map[row].length; col++) {
+			if (map[row][col] === value) return { row, col };
+		}
+	}
+};
+
 export const getCoordinate = (position: MapPosition): string => `${position.row},${position.col}`;
 
 export const sumPositions = (positionA: MapPosition, PositionB: MapPosition): MapPosition => ({
