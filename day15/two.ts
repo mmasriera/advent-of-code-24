@@ -11,6 +11,13 @@ const ROBOT = '@';
 const BOX = 'O';
 const EMPTY = '.';
 
+const WIDER_CHARS = {
+	[WALL]: [WALL, WALL],
+	[ROBOT]: [ROBOT, '.'],
+	[BOX]: ['[', ']'],
+	[EMPTY]: ['.', '.'],
+};
+
 const MOVEMENT_DIRECTIONS = {
 	'<': MAP_DIRECTIONS[3],
 	'>': MAP_DIRECTIONS[1],
@@ -98,14 +105,22 @@ const moveBoxes = (map: string[][], movements: string): void => {
 	}
 };
 
+const widenMap = (map: string[][]): string[][] => {
+	return map.map(row => row.flatMap(char => WIDER_CHARS[char as keyof typeof WIDER_CHARS]));
+};
+
 const main = (): void => {
-	const { map, movements } = parseInput(readInputByLines('./inputs/main.txt'));
+	const { map, movements } = parseInput(readInputByLines('./inputs/test-2.txt'));
 
-	moveBoxes(map, movements); // updates map
+	const widerMap = widenMap(map);
+	
+	console.log(widerMap);
 
-	const result = sumGpsCoordinates(map);
+	// moveBoxes(map, movements); // updates map
 
-	console.log('result day 15, part 2:', result); // 
+	// const result = sumGpsCoordinates(map);
+
+	// console.log('result day 15, part 2:', result); // 
 };
 
 main();
