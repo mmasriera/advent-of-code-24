@@ -1,5 +1,5 @@
 import { readInputByLines } from '../utils/index.ts';
-import { MAP_DIRECTIONS, type MapPosition, findInMap, sumPositions, printMap } from '../utils/index.ts';
+import { MAP_DIRECTIONS, type MapPosition, findInMap, sumPositions } from '../utils/index.ts';
 
 type Input = {
 	map: string[][];
@@ -51,7 +51,7 @@ const sumGpsCoordinates = (map: string[][]): number => {
 
 	for (let row = 0; row < map.length; row++) {
 		for (let col = 0; col < map[row].length; col++) {
-			if (map[row][col] === BOX) {
+			if (map[row][col] === W_BOX_LEFT) {
 				result += row * 100 + col;
 			}
 		}
@@ -60,53 +60,49 @@ const sumGpsCoordinates = (map: string[][]): number => {
 	return result;
 };
 
-// const pushRow = (map: string[][], start: MapPosition, direction: MapPosition): boolean => {
-// 	const row = map[start.row];
-// 	let currentChar = row[start.col];
-// 	let next = sumPositions(start, direction);
-
-// 	while (row[next.col] !== WALL) {
-// 		if (row[next.col] === EMPTY) {
-// 			row[next.col] = currentChar;
-
-// 			return true;
-// 		}
-
-// 		const nextChar = row[next.col];
-
-// 		row[next.col] = currentChar;
-// 		next = sumPositions(next, direction);
-// 		currentChar = nextChar;
-// 	}
-
-// 	return false;
-// };
-
 type PushMove = {
 	next: MapPosition;
 	char: string;
 };
 
 const pushBox = (map: string[][], start: MapPosition, direction: MapPosition): PushMove[] => {
-	let current = sumPositions(start, direction);
-	const moves: PushMove[] = [{ next: current, char: EMPTY }]; // first one
+	const next = sumPositions(start, direction);
+	const nextChar = map[next.row][next.col];
 
-	if (direction.row === 0) {
-		let nextChar = map[current.row][current.col];
-
-		while (nextChar !== WALL) {
-			if (nextChar === EMPTY) {
-				return moves;
-			}
-
-			const next = sumPositions(current, direction);
-			moves.push({ next, char: map[current.row][current.col] });
-			current = next;
-			nextChar = map[current.row][current.col];
-		}
+	if (nextChar === EMPTY) {
+		return [{ next, char: map[start.row][start.col] }];
 	}
 
-	return [];
+	if (nextChar === WALL) {
+		return [];
+	}
+
+	const nextMoves = pushBox(map, next, direction);
+
+	if (nextMoves.length === 0) {
+		return [];
+	}
+
+	if (direction.col === 0) {
+		// vertical movement
+		const complementary =
+			map[next.row][next.col] === W_BOX_LEFT
+				? { row: next.row, col: next.col + 1 }
+				: { row: next.row, col: next.col - 1 };
+
+		const complementaryMoves = pushBox(map, complementary, direction);
+
+		if (complementaryMoves.length === 0) {
+			return [];
+		}
+
+		nextMoves.push(
+			{ next: complementary, char: EMPTY }, // empty space where the complementary was
+			...complementaryMoves,
+		);
+	}
+
+	return [{ next, char: map[start.row][start.col] }, ...nextMoves];
 };
 
 const doMovement = (map: string[][], current: MapPosition, movement: string): MapPosition => {
@@ -119,10 +115,10 @@ const doMovement = (map: string[][], current: MapPosition, movement: string): Ma
 	}
 
 	if (nextChar === W_BOX_LEFT || nextChar === W_BOX_RIGHT) {
-		const movedBoxes = pushBox(map, current, direction);
+		const moves = pushBox(map, current, direction);
 
-		if (movedBoxes.length > 0) {
-			for (const move of movedBoxes) {
+		if (moves.length > 0) {
+			for (const move of moves) {
 				map[move.next.row][move.next.col] = move.char;
 			}
 
@@ -141,27 +137,23 @@ const moveBoxes = (map: string[][], movements: string): void => {
 	}
 
 	map[robot.row][robot.col] = EMPTY;
-	printMap(map);
 
 	for (const movement of movements) {
 		map[robot.row][robot.col] = EMPTY;
-		console.log(' MOVEMENT', { movement, robot });
 		robot = doMovement(map, robot, movement);
 		map[robot.row][robot.col] = ROBOT;
-
-		printMap(map);
 	}
 };
 
 const main = (): void => {
 	console.log(Deno.cwd());
-	const { map, movements } = parseInput(readInputByLines('./inputs/test-3.1.txt'));
+	const { map, movements } = parseInput(readInputByLines('./inputs/test-2.txt'));
 
 	moveBoxes(map, movements);
 
 	const result = sumGpsCoordinates(map);
 
-	console.log('result day 15, part 2:', result); //
+	console.log('result day 15, part 2:', result); // 9021
 };
 
 main();
