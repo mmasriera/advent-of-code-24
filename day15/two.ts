@@ -1,7 +1,5 @@
 import { readInputByLines } from '../utils/index.ts';
-import {
-	MAP_DIRECTIONS, type MapPosition, findInMap, sumPositions, printMap, getCoordinate,
-} from '../utils/index.ts';
+import { MAP_DIRECTIONS, type MapPosition, findInMap, sumPositions } from '../utils/index.ts';
 
 type Input = {
 	map: string[][];
@@ -53,7 +51,7 @@ const sumGpsCoordinates = (map: string[][]): number => {
 
 	for (let row = 0; row < map.length; row++) {
 		for (let col = 0; col < map[row].length; col++) {
-			if (map[row][col] === BOX) {
+			if (map[row][col] === W_BOX_LEFT) {
 				result += row * 100 + col;
 			}
 		}
@@ -67,9 +65,7 @@ type PushMove = {
 	char: string;
 };
 
-const pushBox = (
-	map: string[][], start: MapPosition, direction: MapPosition
-): PushMove[] => {
+const pushBox = (map: string[][], start: MapPosition, direction: MapPosition): PushMove[] => {
 	const next = sumPositions(start, direction);
 	const nextChar = map[next.row][next.col];
 
@@ -87,10 +83,12 @@ const pushBox = (
 		return [];
 	}
 
-	if (direction.col === 0) { // vertical movement
-		const complementary = map[next.row][next.col] === W_BOX_LEFT ?
-			{ row: next.row, col: next.col + 1 }
-			: { row: next.row, col: next.col - 1 };
+	if (direction.col === 0) {
+		// vertical movement
+		const complementary =
+			map[next.row][next.col] === W_BOX_LEFT
+				? { row: next.row, col: next.col + 1 }
+				: { row: next.row, col: next.col - 1 };
 
 		const complementaryMoves = pushBox(map, complementary, direction);
 
@@ -100,7 +98,7 @@ const pushBox = (
 
 		nextMoves.push(
 			{ next: complementary, char: EMPTY }, // empty space where the complementary was
-			...complementaryMoves
+			...complementaryMoves,
 		);
 	}
 
@@ -139,27 +137,23 @@ const moveBoxes = (map: string[][], movements: string): void => {
 	}
 
 	map[robot.row][robot.col] = EMPTY;
-	printMap(map);
 
 	for (const movement of movements) {
 		map[robot.row][robot.col] = EMPTY;
-		console.log(' MOVEMENT', { movement, robot });
 		robot = doMovement(map, robot, movement);
 		map[robot.row][robot.col] = ROBOT;
-
-		printMap(map);
 	}
 };
 
 const main = (): void => {
 	console.log(Deno.cwd());
-	const { map, movements } = parseInput(readInputByLines('./inputs/test-3.txt'));
+	const { map, movements } = parseInput(readInputByLines('./inputs/test-2.txt'));
 
 	moveBoxes(map, movements);
 
 	const result = sumGpsCoordinates(map);
 
-	console.log('result day 15, part 2:', result); //
+	console.log('result day 15, part 2:', result); // 9021
 };
 
 main();
