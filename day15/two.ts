@@ -87,7 +87,24 @@ const pushBox = (
 		return [];
 	}
 
-	return [{ next, char: map[start.row][start.col] }, ...pushBox(map, next, direction)];
+	if (direction.col === 0) { // vertical movement
+		const complementary = map[next.row][next.col] === W_BOX_LEFT ?
+			{ row: next.row, col: next.col + 1 }
+			: { row: next.row, col: next.col - 1 };
+
+		const complementaryMoves = pushBox(map, complementary, direction);
+
+		if (complementaryMoves.length === 0) {
+			return [];
+		}
+
+		nextMoves.push(
+			{ next: complementary, char: EMPTY }, // empty space where the complementary was
+			...complementaryMoves
+		);
+	}
+
+	return [{ next, char: map[start.row][start.col] }, ...nextMoves];
 };
 
 const doMovement = (map: string[][], current: MapPosition, movement: string): MapPosition => {
@@ -101,8 +118,6 @@ const doMovement = (map: string[][], current: MapPosition, movement: string): Ma
 
 	if (nextChar === W_BOX_LEFT || nextChar === W_BOX_RIGHT) {
 		const moves = pushBox(map, current, direction);
-
-		// FILTER OUT REPEATED MOVES
 
 		if (moves.length > 0) {
 			for (const move of moves) {
