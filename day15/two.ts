@@ -62,34 +62,10 @@ const sumGpsCoordinates = (map: string[][]): number => {
 	return result;
 };
 
-// const pushRow = (map: string[][], start: MapPosition, direction: MapPosition): boolean => {
-// 	const row = map[start.row];
-// 	let currentChar = row[start.col];
-// 	let next = sumPositions(start, direction);
-
-// 	while (row[next.col] !== WALL) {
-// 		if (row[next.col] === EMPTY) {
-// 			row[next.col] = currentChar;
-
-// 			return true;
-// 		}
-
-// 		const nextChar = row[next.col];
-
-// 		row[next.col] = currentChar;
-// 		next = sumPositions(next, direction);
-// 		currentChar = nextChar;
-// 	}
-
-// 	return false;
-// };
-
 type PushMove = {
 	next: MapPosition;
 	char: string;
 };
-
-const USED_MOVES = new Set<string>();
 
 const pushBox = (
 	map: string[][], start: MapPosition, direction: MapPosition
@@ -119,6 +95,8 @@ const doMovement = (map: string[][], current: MapPosition, movement: string): Ma
 
 	if (nextChar === W_BOX_LEFT || nextChar === W_BOX_RIGHT) {
 		const moves = pushBox(map, current, direction);
+
+		// FILTER OUT REPEATED MOVES
 
 		if (moves.length > 0) {
 			for (const move of moves) {
