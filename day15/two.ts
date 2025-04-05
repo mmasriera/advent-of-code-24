@@ -60,28 +60,54 @@ const sumGpsCoordinates = (map: string[][]): number => {
 	return result;
 };
 
-const pushRow = (map: string[][], start: MapPosition, direction: MapPosition): boolean => {
-	const row = map[start.row];
-	let currentChar = row[start.col];
-	let next = sumPositions(start, direction);
+// const pushRow = (map: string[][], start: MapPosition, direction: MapPosition): boolean => {
+// 	const row = map[start.row];
+// 	let currentChar = row[start.col];
+// 	let next = sumPositions(start, direction);
 
-	while (row[next.col] !== WALL) {
-		if (row[next.col] === EMPTY) {
-			row[next.col] = currentChar;
+// 	while (row[next.col] !== WALL) {
+// 		if (row[next.col] === EMPTY) {
+// 			row[next.col] = currentChar;
 
-			return true;
+// 			return true;
+// 		}
+
+// 		const nextChar = row[next.col];
+
+// 		row[next.col] = currentChar;
+// 		next = sumPositions(next, direction);
+// 		currentChar = nextChar;
+// 	}
+
+// 	return false;
+// };
+
+type PushMove = {
+	next: MapPosition,
+	char: string
+}
+
+const pushBox = (map: string[][], start: MapPosition, direction: MapPosition): PushMove[] => {
+	let current = sumPositions(start, direction);
+	const moves: PushMove[] = [{ next: current, char: EMPTY }]; // first one
+	
+	if (direction.row === 0) {
+		let nextChar = map[current.row][current.col];
+	
+		while (nextChar !== WALL) {			
+			if (nextChar === EMPTY) {
+				return moves;
+			}
+			
+			const next = sumPositions(current, direction);
+			moves.push({ next, char: map[current.row][current.col] });
+			current = next;
+			nextChar = map[current.row][current.col];
 		}
-
-		const nextChar = row[next.col];
-
-		row[next.col] = currentChar;
-		next = sumPositions(next, direction);
-		currentChar = nextChar;
 	}
 
-	return false;
+	return [];
 };
-
 
 const doMovement = (map: string[][], current: MapPosition, movement: string): MapPosition => {
 	const direction = MOVEMENT_DIRECTIONS[movement as keyof typeof MOVEMENT_DIRECTIONS];
@@ -93,17 +119,14 @@ const doMovement = (map: string[][], current: MapPosition, movement: string): Ma
 	}
 
 	if (nextChar === W_BOX_LEFT || nextChar === W_BOX_RIGHT) {
-		const mapCopy = structuredClone(map);
-		const isHorizontal = direction.row === 0;
+		const movedBoxes = pushBox(map, current, direction);
 
-		if (isHorizontal) {
-			const success = pushRow(mapCopy, current, direction);
-
-			if (success) {
-				map[next.row] = mapCopy[next.row];
-
-				return next;
+		if (movedBoxes.length > 0) {
+			for (const move of movedBoxes) {
+				map[move.next.row][move.next.col] = move.char;
 			}
+
+			return next;
 		}
 	}
 
