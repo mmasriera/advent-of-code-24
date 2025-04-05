@@ -15,3 +15,18 @@ deno run --allow-read ./one.ts
 deno task check
 deno task format
 ```
+
+debug (vscode) --> launch.json 
+```json
+{
+    "type": "node",
+    "program": "${workspaceFolder}/dayX/one.ts",
+    "cwd": "${workspaceFolder}/dayX",
+    "runtimeArgs": [
+        "run",
+        "--unstable",
+        "--inspect-wait",
+        "--allow-all"
+    ]
+}
+```
