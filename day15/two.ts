@@ -1,5 +1,7 @@
 import { readInputByLines } from '../utils/index.ts';
-import { MAP_DIRECTIONS, type MapPosition, findInMap, sumPositions, printMap } from '../utils/index.ts';
+import {
+	MAP_DIRECTIONS, type MapPosition, findInMap, sumPositions, printMap, getCoordinate,
+} from '../utils/index.ts';
 
 type Input = {
 	map: string[][];
@@ -87,26 +89,23 @@ type PushMove = {
 	char: string;
 };
 
-const pushBox = (map: string[][], start: MapPosition, direction: MapPosition): PushMove[] => {
-	let current = sumPositions(start, direction);
-	const moves: PushMove[] = [{ next: current, char: EMPTY }]; // first one
+const USED_MOVES = new Set<string>();
 
-	if (direction.row === 0) {
-		let nextChar = map[current.row][current.col];
+const pushBox = (
+	map: string[][], start: MapPosition, direction: MapPosition
+): PushMove[] => {
+	const next = sumPositions(start, direction);
+	const nextChar = map[next.row][next.col];
 
-		while (nextChar !== WALL) {
-			if (nextChar === EMPTY) {
-				return moves;
-			}
-
-			const next = sumPositions(current, direction);
-			moves.push({ next, char: map[current.row][current.col] });
-			current = next;
-			nextChar = map[current.row][current.col];
-		}
+	if (nextChar === EMPTY) {
+		return [{ next, char: map[start.row][start.col] }];
 	}
 
-	return [];
+	if (nextChar === WALL) {
+		return [];
+	}
+
+	return [{ next, char: map[start.row][start.col] }, ...pushBox(map, next, direction)];
 };
 
 const doMovement = (map: string[][], current: MapPosition, movement: string): MapPosition => {
@@ -119,10 +118,10 @@ const doMovement = (map: string[][], current: MapPosition, movement: string): Ma
 	}
 
 	if (nextChar === W_BOX_LEFT || nextChar === W_BOX_RIGHT) {
-		const movedBoxes = pushBox(map, current, direction);
+		const moves = pushBox(map, current, direction);
 
-		if (movedBoxes.length > 0) {
-			for (const move of movedBoxes) {
+		if (moves.length > 0) {
+			for (const move of moves) {
 				map[move.next.row][move.next.col] = move.char;
 			}
 
