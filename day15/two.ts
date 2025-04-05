@@ -1,5 +1,5 @@
 import { readInputByLines } from '../utils/index.ts';
-import { MAP_DIRECTIONS, type MapPosition, findInMap, sumPositions } from '../utils/index.ts';
+import { MAP_DIRECTIONS, type MapPosition, findInMap, sumPositions, printMap } from '../utils/index.ts';
 
 type Input = {
 	map: string[][];
@@ -10,11 +10,13 @@ const WALL = '#';
 const ROBOT = '@';
 const BOX = 'O';
 const EMPTY = '.';
+const W_BOX_LEFT = '[';
+const W_BOX_RIGHT = ']';
 
 const WIDER_CHARS = {
 	[WALL]: [WALL, WALL],
 	[ROBOT]: [ROBOT, '.'],
-	[BOX]: ['[', ']'],
+	[BOX]: [W_BOX_LEFT, W_BOX_RIGHT],
 	[EMPTY]: ['.', '.'],
 };
 
@@ -23,6 +25,10 @@ const MOVEMENT_DIRECTIONS = {
 	'>': MAP_DIRECTIONS[1],
 	'^': MAP_DIRECTIONS[0],
 	v: MAP_DIRECTIONS[2],
+};
+
+const widenMap = (map: string[][]): string[][] => {
+	return map.map(row => row.flatMap(char => WIDER_CHARS[char as keyof typeof WIDER_CHARS]));
 };
 
 const parseInput = (lines: string[]): Input => {
@@ -37,7 +43,7 @@ const parseInput = (lines: string[]): Input => {
 		}
 	}
 
-	return { map, movements };
+	return { map: widenMap(map), movements };
 };
 
 const sumGpsCoordinates = (map: string[][]): number => {
@@ -54,37 +60,50 @@ const sumGpsCoordinates = (map: string[][]): number => {
 	return result;
 };
 
-const pushBox = (map: string[][], initialBoxPosition: MapPosition, direction: MapPosition): boolean => {
-	const next = sumPositions(initialBoxPosition, direction);
+const pushRow = (map: string[][], start: MapPosition, direction: MapPosition): boolean => {
+	const row = map[start.row];
+	let currentChar = row[start.col];
+	let next = sumPositions(start, direction);
 
-	if (map[next.row][next.col] === BOX) {
-		return pushBox(map, next, direction);
-	}
+	while (row[next.col] !== WALL) {
+		if (row[next.col] === EMPTY) {
+			row[next.col] = currentChar;
 
-	if (map[next.row][next.col] === EMPTY) {
-		map[next.row][next.col] = BOX;
+			return true;
+		}
 
-		return true;
+		const nextChar = row[next.col];
+
+		row[next.col] = currentChar;
+		next = sumPositions(next, direction);
+		currentChar = nextChar;
 	}
 
 	return false;
 };
 
+
 const doMovement = (map: string[][], current: MapPosition, movement: string): MapPosition => {
 	const direction = MOVEMENT_DIRECTIONS[movement as keyof typeof MOVEMENT_DIRECTIONS];
 	const next = sumPositions(current, direction);
+	const nextChar = map[next.row][next.col];
 
-	if (map[next.row][next.col] === EMPTY) {
+	if (nextChar === EMPTY) {
 		return next;
 	}
 
-	if (map[next.row][next.col] === BOX) {
-		const canPush = pushBox(map, next, direction);
+	if (nextChar === W_BOX_LEFT || nextChar === W_BOX_RIGHT) {
+		const mapCopy = structuredClone(map);
+		const isHorizontal = direction.row === 0;
 
-		if (canPush) {
-			map[next.row][next.col] = EMPTY;
+		if (isHorizontal) {
+			const success = pushRow(mapCopy, current, direction);
 
-			return next;
+			if (success) {
+				map[next.row] = mapCopy[next.row];
+
+				return next;
+			}
 		}
 	}
 
@@ -99,28 +118,27 @@ const moveBoxes = (map: string[][], movements: string): void => {
 	}
 
 	map[robot.row][robot.col] = EMPTY;
+	printMap(map);
 
 	for (const movement of movements) {
+		map[robot.row][robot.col] = EMPTY;
+		console.log(' MOVEMENT', { movement, robot });
 		robot = doMovement(map, robot, movement);
+		map[robot.row][robot.col] = ROBOT;
+
+		printMap(map);
 	}
 };
 
-const widenMap = (map: string[][]): string[][] => {
-	return map.map(row => row.flatMap(char => WIDER_CHARS[char as keyof typeof WIDER_CHARS]));
-};
-
 const main = (): void => {
-	const { map, movements } = parseInput(readInputByLines('./inputs/test-2.txt'));
+	console.log(Deno.cwd());
+	const { map, movements } = parseInput(readInputByLines('./inputs/test-3.1.txt'));
 
-	const widerMap = widenMap(map);
-	
-	console.log(widerMap);
+	moveBoxes(map, movements);
 
-	// moveBoxes(map, movements); // updates map
+	const result = sumGpsCoordinates(map);
 
-	// const result = sumGpsCoordinates(map);
-
-	// console.log('result day 15, part 2:', result); // 
+	console.log('result day 15, part 2:', result); // 
 };
 
 main();

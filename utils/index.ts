@@ -1,3 +1,4 @@
+
 export type Position = {
 	x: number;
 	y: number;
@@ -49,4 +50,8 @@ export const readInputFile = (path: string): string => {
 
 export const readInputByLines = (path: string): string[] => {
 	return readInputFile(path).split('\n');
+};
+
+export const printMap = (map: string[][]): void => {
+	console.log(map.map((row) => row.join('')).join('\n'));
 };
