@@ -28,7 +28,7 @@ const MOVEMENT_DIRECTIONS = {
 };
 
 const widenMap = (map: string[][]): string[][] => {
-	return map.map(row => row.flatMap(char => WIDER_CHARS[char as keyof typeof WIDER_CHARS]));
+	return map.map((row) => row.flatMap((char) => WIDER_CHARS[char as keyof typeof WIDER_CHARS]));
 };
 
 const parseInput = (lines: string[]): Input => {
@@ -83,22 +83,22 @@ const sumGpsCoordinates = (map: string[][]): number => {
 // };
 
 type PushMove = {
-	next: MapPosition,
-	char: string
-}
+	next: MapPosition;
+	char: string;
+};
 
 const pushBox = (map: string[][], start: MapPosition, direction: MapPosition): PushMove[] => {
 	let current = sumPositions(start, direction);
 	const moves: PushMove[] = [{ next: current, char: EMPTY }]; // first one
-	
+
 	if (direction.row === 0) {
 		let nextChar = map[current.row][current.col];
-	
-		while (nextChar !== WALL) {			
+
+		while (nextChar !== WALL) {
 			if (nextChar === EMPTY) {
 				return moves;
 			}
-			
+
 			const next = sumPositions(current, direction);
 			moves.push({ next, char: map[current.row][current.col] });
 			current = next;
@@ -161,7 +161,7 @@ const main = (): void => {
 
 	const result = sumGpsCoordinates(map);
 
-	console.log('result day 15, part 2:', result); // 
+	console.log('result day 15, part 2:', result); //
 };
 
 main();
