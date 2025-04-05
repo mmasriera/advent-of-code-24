@@ -81,6 +81,12 @@ const pushBox = (
 		return [];
 	}
 
+	const nextMoves = pushBox(map, next, direction);
+
+	if (nextMoves.length === 0) {
+		return [];
+	}
+
 	return [{ next, char: map[start.row][start.col] }, ...pushBox(map, next, direction)];
 };
 
