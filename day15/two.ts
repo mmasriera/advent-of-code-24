@@ -153,7 +153,7 @@ const moveBoxes = (map: string[][], movements: string): void => {
 
 const main = (): void => {
 	console.log(Deno.cwd());
-	const { map, movements } = parseInput(readInputByLines('./inputs/test-3.1.txt'));
+	const { map, movements } = parseInput(readInputByLines('./inputs/test-3.txt'));
 
 	moveBoxes(map, movements);
 
